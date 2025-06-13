@@ -1,0 +1,408 @@
+﻿<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduCanin - Accueil</title>
+  <link rel="icon" type="image/x-icon" href="~/assets/img/LogoPrincipal.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .paw-pattern {
+      background-color: #f3f4f6;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e5e7eb' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M12 6a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zM6 12a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zM12 28a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zM6 44a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .icon-pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @@keyframes
+    pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+  </style>
+</head>
+
+<body class="paw-pattern font-sans">
+  <!-- Navbar -->
+  <nav class="paw-pattern bg-opacity-80 backdrop-blur-md shadow-lg border-b border-gray-200 sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex justify-between items-center">
+        <a href="#page-top" class="flex items-center space-x-3">
+          <img src="~/assets/img/LogoPrincipal.png" class="h-12" alt="Logo EduCanin">
+          <span class="text-2xl font-bold text-indigo-700">EduCanin</span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex space-x-6 items-center">
+          <a href="#services" class="text-gray-700 hover:text-indigo-500 font-medium">Découvrir</a>
+          <a href="#portfolio" class="text-gray-700 hover:text-indigo-500 font-medium">Témoignage</a>
+                    <a href="#team" class="text-gray-700 hover:text-indigo-500 font-medium">
+                        À propos
+                    </a>
+          <a asp-controller="Account" asp-action="Register"
+            class="px-4 py-2 bg-white text-indigo-700 border border-indigo-500 rounded hover:bg-indigo-50 transition">Inscription</a>
+          <a asp-controller="Account" asp-action="Login"
+            class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition">Connexion</a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden text-gray-700 hover:text-indigo-500 focus:outline-none">
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="md:hidden hidden mt-4 pb-4">
+        <div class="flex flex-col space-y-4">
+          <a href="#services"
+            class="text-gray-700 hover:text-indigo-500 font-medium py-2 px-4 rounded hover:bg-white/50 transition">Services</a>
+          <a href="#portfolio"
+            class="text-gray-700 hover:text-indigo-500 font-medium py-2 px-4 rounded hover:bg-white/50 transition">Portfolio</a>
+          <a href="#team"
+            class="text-gray-700 hover:text-indigo-500 font-medium py-2 px-4 rounded hover:bg-white/50 transition">Équipe</a>
+          <div class="flex flex-col space-y-2 pt-2">
+            <a asp-controller="Account" asp-action="Register"
+              class="px-4 py-2 bg-white text-indigo-700 border border-indigo-500 rounded hover:bg-indigo-50 transition text-center">Inscription</a>
+            <a asp-controller="Account" asp-action="Login"
+              class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition text-center">Connexion</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="relative h-[80vh] bg-cover bg-center flex items-center justify-center text-white"
+    style="background-image: url('/assets/img/Accueil.png');">
+    <div class="bg-black bg-opacity-60 p-10 rounded-lg text-center">
+      <img src="~/assets/img/EduCanin-TextLogo.png" alt="EduCanin Logo" class="mb-6 w-80 mx-auto">
+      <h1 class="text-4xl md:text-5xl font-bold uppercase">Complicité, apprentissage, et aventures</h1>
+      <a href="#services"
+        class="mt-6 inline-block bg-indigo-500 text-white px-6 py-3 rounded-full text-lg hover:bg-indigo-600 transition">Découvrir</a>
+    </div>
+  </header>
+
+  <!-- Services Section -->
+  <section id="services" class="py-12 md:py-20">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-2xl md:text-3xl font-bold uppercase text-gray-800 mb-4">Découvrir</h2>
+      <p class="text-gray-600 mb-8 md:mb-12 max-w-2xl mx-auto">Rejoignez notre communauté et offrez à votre compagnon
+        une expérience enrichissante grâce à nos activités spécialement conçues pour renforcer le lien entre vous et
+        votre chien.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+
+        <!-- Card 1: Inscription -->
+        <div class="card-hover bg-white rounded-lg p-6 md:p-8 shadow-md border-l-4 border-indigo-500">
+          <div class="text-indigo-500 text-4xl md:text-6xl mb-4 md:mb-6 icon-pulse"><i
+              class="fa-regular fa-address-card"></i></div>
+          <h4 class="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-gray-800">Inscrivez-vous</h4>
+          <p class="text-gray-600 mb-4 md:mb-6 text-sm md:text-base">Créez votre compte en quelques minutes et accédez à
+            toutes nos activités. Renseignez les informations sur votre chien pour une expérience personnalisée.</p>
+          <div class="bg-gray-50 p-3 md:p-4 rounded-lg">
+            <h5 class="font-semibold text-indigo-700 mb-2 text-sm md:text-base">Inclus dans l'inscription :</h5>
+            <ul class="text-xs md:text-sm text-gray-600 space-y-1">
+              <li>✓ Profil personnalisé pour votre chien</li>
+              <li>✓ Accès aux calendriers d'activités</li>
+              <li>✓ Suivi des progrès</li>
+              <li>✓ Communauté de passionnés</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Card 2: Réservation -->
+        <div class="card-hover bg-white rounded-lg p-6 md:p-8 shadow-md border-l-4 border-green-500">
+          <div class="text-green-500 text-4xl md:text-6xl mb-4 md:mb-6 icon-pulse"><i
+              class="fa-solid fa-calendar-days"></i></div>
+          <h4 class="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-gray-800">Réservez</h4>
+          <p class="text-gray-600 mb-4 md:mb-6 text-sm md:text-base">Choisissez parmi nos nombreuses activités : cours
+            d'éducation, séances d'agility, balades en groupe, ateliers de socialisation et bien plus encore.</p>
+          <div class="bg-gray-50 p-3 md:p-4 rounded-lg">
+            <h5 class="font-semibold text-green-700 mb-2 text-sm md:text-base">Nos activités populaires :</h5>
+            <ul class="text-xs md:text-sm text-gray-600 space-y-1">
+              <li>🏃 Cours d'agility débutant/confirmé</li>
+              <li>🎓 Éducation canine positive</li>
+              <li>🌳 Balades découverte en groupe</li>
+              <li>🤝 Ateliers de socialisation</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Card 3: Participation -->
+        <div class="card-hover bg-white rounded-lg p-6 md:p-8 shadow-md border-l-4 border-purple-500">
+          <div class="text-purple-500 text-4xl md:text-6xl mb-4 md:mb-6 icon-pulse"><i class="fa-solid fa-dog"></i>
+          </div>
+          <h4 class="text-xl md:text-2xl font-semibold mb-3 md:mb-4 text-gray-800">Participez</h4>
+          <p class="text-gray-600 mb-4 md:mb-6 text-sm md:text-base">Vivez des moments inoubliables avec votre
+            compagnon. Nos éducateurs expérimentés vous accompagnent dans chaque étape de l'apprentissage.</p>
+          <div class="bg-gray-50 p-3 md:p-4 rounded-lg">
+            <h5 class="font-semibold text-purple-700 mb-2 text-sm md:text-base">Bénéfices pour votre chien :</h5>
+            <ul class="text-xs md:text-sm text-gray-600 space-y-1">
+              <li>🧠 Stimulation mentale et physique</li>
+              <li>❤️ Renforcement du lien maître-chien</li>
+              <li>🐕 Socialisation avec d'autres chiens</li>
+              <li>🏆 Développement de la confiance</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio Section with enhanced modals -->
+  <section id="portfolio" class="py-12 md:py-20 bg-gray-100">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-2xl md:text-3xl font-bold uppercase text-gray-800 mb-4">Témoignages</h2>
+      <p class="text-gray-600 mb-8 md:mb-12">Découvrez les expériences de nos adhérents et leurs compagnons à quatre
+        pattes :</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Témoignage 1 -->
+        <div
+          class="relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer group transition transform hover:scale-105 hover:shadow-xl"
+          onclick="openModal(1)">
+          <img src="~/assets/img/imageAvis1.png" alt="Témoignage Max & Sophie" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h4 class="text-lg font-bold text-gray-800">Une relation transformée</h4>
+            <p class="text-gray-500 text-sm mt-2">Max & Sophie - Cours d'éducation positive</p>
+          </div>
+        </div>
+
+        <!-- Témoignage 2 -->
+        <div
+          class="relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer group transition transform hover:scale-105 hover:shadow-xl"
+          onclick="openModal(2)">
+          <img src="~/assets/img/imageAvis2.png" alt="Témoignage Luna & Marc" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h4 class="text-lg font-bold text-gray-800">L'agility, notre passion</h4>
+            <p class="text-gray-500 text-sm mt-2">Luna & Marc - Cours d'agility</p>
+          </div>
+        </div>
+
+        <!-- Témoignage 3 -->
+        <div
+          class="relative bg-white rounded-lg shadow-md overflow-hidden cursor-pointer group transition transform hover:scale-105 hover:shadow-xl"
+          onclick="openModal(3)">
+          <img src="~/assets/img/imageAvis3.png" alt="Témoignage Rocky & famille Dubois"
+            class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h4 class="text-lg font-bold text-gray-800">Un chien plus sociable</h4>
+            <p class="text-gray-500 text-sm mt-2">Rocky & famille Dubois - Ateliers de socialisation</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Modal Template -->
+    <div id="modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
+        <button onclick="closeModal()"
+          class="absolute top-4 right-4 z-10 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 transition">
+          <i class="fas fa-times text-sm"></i>
+        </button>
+
+        <div id="modal-header" class="h-32 gradient-bg flex items-center justify-center">
+          <div class="text-white text-center">
+            <i id="modal-icon" class="fas fa-heart text-3xl mb-2"></i>
+            <h3 id="modal-title" class="text-xl md:text-2xl font-bold">Titre</h3>
+          </div>
+        </div>
+
+        <div class="p-4 md:p-6">
+          <div class="mb-6">
+            <h4 class="text-lg md:text-xl font-semibold mb-3 text-gray-800" id="modal-subtitle">Sous-titre</h4>
+            <p id="modal-text" class="text-gray-600 leading-relaxed text-sm md:text-base">Description</p>
+          </div>
+
+          <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 md:p-6 rounded-lg border-l-4 border-indigo-500">
+            <div class="flex flex-col md:flex-row md:items-start space-y-3 md:space-y-0 md:space-x-4">
+              <div
+                class="bg-indigo-500 text-white rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0 mx-auto md:mx-0">
+                <i class="fas fa-quote-left"></i>
+              </div>
+              <div class="text-center md:text-left">
+                <p id="modal-testimonial" class="text-gray-700 italic text-base md:text-lg mb-3">"Témoignage par défaut"
+                </p>
+                <div class="flex items-center justify-center md:justify-start space-x-2">
+                  <img id="modal-avatar" class="w-8 h-8 rounded-full"
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%236366f1'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='white' font-size='40' font-family='Arial'%3E👤%3C/text%3E%3C/svg%3E"
+                    alt="Avatar">
+                  <p id="modal-author" class="text-sm text-gray-600 font-medium">- Nom</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="modal-details" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Dynamic content will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section id="team" class="py-20">
+    <div class="container mx-auto text-center">
+      <h2 class="text-3xl font-bold uppercase text-gray-800 mb-4">À propos</h2>
+      <p class="text-gray-600 mb-12">Le développeur derrière ce site</p>
+      <div class="flex justify-center">
+        <div class="bg-white rounded-lg shadow-md p-6 text-center w-72">
+          <img class="rounded-full mx-auto w-32 h-32 mb-4" src="~/assets/img/team/2.jpeg" alt="Kraimbah Said">
+          <h4 class="text-xl font-bold">Kraimbah Said</h4>
+          <p class="text-sm text-gray-600 mt-2">Développeur passionné, en apprentissage constant.</p>
+
+          <div class="flex justify-center space-x-4 mt-4">
+            <a href="https://said.contact" class="text-indigo-500 hover:text-indigo-700"><i
+                class="fas fa-globe"></i></a>
+            <a href="https://github.com/Said-Develops" class="text-indigo-500 hover:text-indigo-700"><i
+                class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/said-kraimbah-/" class="text-indigo-500 hover:text-indigo-700"><i
+                class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-6">
+    <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+      <p class="text-sm">&copy; 2025 EduCanin. Tous droits réservés.</p>
+      <div class="flex space-x-4 mt-2 md:mt-0">
+        <a href="#" class="text-gray-300 hover:text-white">Privacy Policy</a>
+        <a href="#" class="text-gray-300 hover:text-white">Terms of Use</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Enhanced JavaScript for modals -->
+  <script>
+    const modalData = {
+      1: {
+        title: "Complicité",
+        subtitle: "Une relation transformée avec Max",
+        text: "Grâce aux cours d'éducation positive d'EduCanin, Sophie et Max ont développé une complicité extraordinaire. Les méthodes douces et respectueuses ont permis à Max, un berger allemand de 2 ans, de canaliser son énergie tout en renforçant sa confiance en sa maîtresse.",
+        testimonial: "EduCanin a complètement transformé ma relation avec Max. Il est maintenant plus calme, plus attentif et surtout, nous nous comprenons parfaitement ! Les éducateurs sont formidables et les méthodes vraiment efficaces.",
+        author: "Sophie M. et Max",
+        icon: "fas fa-heart",
+        headerClass: "gradient-bg",
+        details: [
+          { icon: "fas fa-calendar-alt", title: "Durée du programme", value: "3 mois de cours hebdomadaires" },
+          { icon: "fas fa-trophy", title: "Résultats", value: "Obéissance parfaite au rappel" },
+          { icon: "fas fa-star", title: "Niveau", value: "Débutant → Confirmé" },
+          { icon: "fas fa-dog", title: "Race", value: "Berger Allemand, 2 ans" }
+        ]
+      },
+      2: {
+        title: "Aventure",
+        subtitle: "L'agility, une passion partagée",
+        text: "Marc et Luna ont découvert l'agility chez EduCanin il y a un an. Cette border collie énergique a trouvé son équilibre grâce à cette discipline qui allie technique, complicité et plaisir. Aujourd'hui, ils participent même à des compétitions régionales !",
+        testimonial: "Luna était hyperactive et difficile à canaliser. L'agility a été la solution parfaite ! Elle s'épanouit complètement et moi je prends autant de plaisir qu'elle. Nous formons maintenant une vraie équipe !",
+        author: "Marc D. et Luna",
+        icon: "fas fa-running",
+        headerClass: "bg-gradient-to-br from-green-400 to-blue-500",
+        details: [
+          { icon: "fas fa-stopwatch", title: "Meilleur temps", value: "45 secondes sur parcours" },
+          { icon: "fas fa-medal", title: "Compétitions", value: "3 podiums en région" },
+          { icon: "fas fa-chart-line", title: "Progression", value: "Niveau compétition en 8 mois" },
+          { icon: "fas fa-dog", title: "Race", value: "Border Collie, 3 ans" }
+        ]
+      },
+      3: {
+        title: "Socialisation",
+        subtitle: "Rocky apprend à vivre en société",
+        text: "Rocky, un adorable golden retriever de la famille Dubois, était très timide avec les autres chiens et les humains. Grâce aux ateliers de socialisation d'EduCanin, il a appris à interagir sereinement et est devenu le chien sociable et équilibré qu'il est aujourd'hui.",
+        testimonial: "Rocky était craintif et se cachait dès qu'il voyait d'autres chiens. Maintenant, il joue avec tous les chiens du quartier et adore rencontrer de nouvelles personnes. C'est un vrai miracle !",
+        author: "Famille Dubois et Rocky",
+        icon: "fas fa-users",
+        headerClass: "bg-gradient-to-br from-purple-400 to-pink-500",
+        details: [
+          { icon: "fas fa-heart", title: "Transformation", value: "De timide à sociable" },
+          { icon: "fas fa-users", title: "Amis canins", value: "Plus de 20 nouveaux amis" },
+          { icon: "fas fa-calendar", title: "Durée", value: "6 mois d'ateliers" },
+          { icon: "fas fa-dog", title: "Race", value: "Golden Retriever, 18 mois" }
+        ]
+      }
+    };
+
+    function openModal(id) {
+      const data = modalData[id];
+      const modal = document.getElementById("modal");
+
+      // Update modal content
+      document.getElementById("modal-title").innerText = data.title;
+      document.getElementById("modal-subtitle").innerText = data.subtitle;
+      document.getElementById("modal-text").innerText = data.text;
+      document.getElementById("modal-testimonial").innerText = data.testimonial;
+      document.getElementById("modal-author").innerText = data.author;
+      document.getElementById("modal-icon").className = data.icon + " text-3xl mb-2";
+
+      // Update header background
+      const header = document.getElementById("modal-header");
+      header.className = "h-32 " + data.headerClass + " flex items-center justify-center";
+
+      // Update details section
+      const detailsContainer = document.getElementById("modal-details");
+      detailsContainer.innerHTML = data.details.map(detail => `
+        <div class="bg-white p-4 rounded-lg shadow border">
+          <div class="flex items-center space-x-3">
+            <i class="${detail.icon} text-indigo-500 text-xl"></i>
+            <div>
+              <p class="text-sm text-gray-600 font-medium">${detail.title}</p>
+              <p class="text-gray-800 font-semibold">${detail.value}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Show modal
+      modal.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      document.getElementById("modal").classList.add("hidden");
+      document.body.style.overflow = "auto";
+    }
+
+    // Close modal when clicking outside
+    document.getElementById("modal").addEventListener("click", function (e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        closeModal();
+      }
+    });
+
+    document.getElementById("mobile-menu-btn").addEventListener("click", function () {
+      const menu = document.getElementById("mobile-menu");
+      menu.classList.toggle("hidden");
+    });
+  </script>
+</body>
+
+</html>

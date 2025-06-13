@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-EduCanin-19cc8f26-7d09-4c3a-8ef6-d22437ba9e40</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\**" />
+    <Content Remove="Services\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Page_autre\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Bazard\ViewDeBaseAspNetMvc\Views\Home\Index.cshtml" />
+    <AdditionalFiles Include="Bazard\ViewDeBaseAspNetMvc\Views\Home\Privacy.cshtml" />
+    <AdditionalFiles Include="Bazard\ViewDeBaseAspNetMvc\Views\Shared\Error.cshtml" />
+    <AdditionalFiles Include="Bazard\ViewDeBaseAspNetMvc\Views\Shared\_Layout.cshtml" />
+    <AdditionalFiles Include="Bazard\ViewDeBaseAspNetMvc\Views\Shared\_LoginPartial.cshtml" />
+    <AdditionalFiles Include="Bazard\ViewDeBaseAspNetMvc\Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <AdditionalFiles Include="Bazard\ViewDeBaseAspNetMvc\Views\_ViewImports.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\assets\img\close-icon.svg" />
+    <None Include="wwwroot\assets\img\EduCanin-TextLogo.png" />
+    <None Include="wwwroot\assets\img\imageAvis1.png" />
+    <None Include="wwwroot\assets\img\imageAvis2.png" />
+    <None Include="wwwroot\assets\img\imageAvis3.png" />
+    <None Include="wwwroot\assets\img\LogoPrincipal.png" />
+    <None Include="wwwroot\assets\img\logos\facebook.svg" />
+    <None Include="wwwroot\assets\img\logos\google.svg" />
+    <None Include="wwwroot\assets\img\logos\ibm.svg" />
+    <None Include="wwwroot\assets\img\logos\microsoft.svg" />
+    <None Include="wwwroot\assets\img\team\2.jpeg" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,273 @@
+﻿@model EduCanin.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Inscription - Club Canin";
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Club Canin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-image: url('https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?ixlib=rb-4.0.3');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .register-card {
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.85);
+        }
+
+        .input-icon {
+            color: #6b7280;
+        }
+
+        .btn-primary {
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .password-strength {
+            height: 3px;
+            transition: all 0.3s;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Bouton retour à l'accueil -->
+    <div class="absolute top-4 left-4">
+        <a href="/" class="btn-back inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm text-gray-700 rounded-lg shadow-md hover:bg-white/90 hover:text-gray-900 border border-gray-200">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Retour à l'accueil
+        </a>
+    </div>
+    <div class="min-h-screen flex items-center justify-center p-4"
+        style="background-image: url('https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?ixlib=rb-4.0.3'); background-size: cover; background-position: center; background-attachment: fixed;">
+        <div class="w-full max-w-md rounded-xl shadow-2xl overflow-hidden border border-gray-100"
+            style="backdrop-filter: blur(10px); background-color: rgba(255, 255, 255, 0.85);">
+            <!-- Header -->
+            <div class="bg-blue-600 p-6 text-center">
+                <div class="flex justify-center items-center">
+                    <i class="fas fa-paw text-white text-3xl mr-3"></i>
+                    <h1 class="text-2xl font-bold text-white">Club Canin</h1>
+                </div>
+                <p class="text-blue-100 mt-2">Rejoignez notre communauté</p>
+            </div>
+
+            <!-- Error Messages -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="bg-red-50 text-red-700 px-4 py-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                    </div>
+                </div>
+            }
+
+
+            <!-- Affichage des erreurs dynamiques -->
+            <div id="error-message" class="bg-red-50 text-red-700 px-4 py-3 hidden">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span id="error-text"></span>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form asp-controller="Account" asp-action="Register" method="post" class="p-6 space-y-4">
+                @Html.AntiForgeryToken()
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="FirstName" class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user" style="color: #6b7280;"></i>
+                            </div>
+                            <input asp-for="FirstName" id="firstname"
+                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Votre prénom">
+                            <span asp-validation-for="FirstName" class="text-xs text-red-500"></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label asp-for="LastName" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user" style="color: #6b7280;"></i>
+                            </div>
+                            <input asp-for="LastName" id="lastname"
+                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Votre nom">
+                            <span asp-validation-for="LastName" class="text-xs text-red-500"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label asp-for="Email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope" style="color: #6b7280;"></i>
+                        </div>
+                        <input asp-for="Email" id="email"
+                            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="votre@email.com">
+                        <span asp-validation-for="Email" class="text-xs text-red-500"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <label asp-for="Password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock" style="color: #6b7280;"></i>
+                        </div>
+                        <input asp-for="Password" id="password" type="password"
+                            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="8 caractères minimum">
+                        <span asp-validation-for="Password" class="text-xs text-red-500"></span>
+                    </div>
+
+                    <!-- Indicateur de force du mot de passe -->
+                    <div class="bg-gray-200 mt-2 rounded-full overflow-hidden">
+                        <div class="flex">
+                            <div id="strength-bar-1" class="password-strength w-full bg-gray-300"></div>
+                            <div id="strength-bar-2" class="password-strength w-full bg-gray-300 ml-1"></div>
+                            <div id="strength-bar-3" class="password-strength w-full bg-gray-300 ml-1"></div>
+                            <div id="strength-bar-4" class="password-strength w-full bg-gray-300 ml-1"></div>
+                        </div>
+                    </div>
+                    <p id="password-hint" class="text-xs mt-1 text-gray-500">8 caractères minimum, avec majuscules,
+                        chiffres et symboles</p>
+                </div>
+
+                <div>
+                    <label asp-for="ConfirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirmer le
+                        mot de passe</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock" style="color: #6b7280;"></i>
+                        </div>
+                        <input asp-for="ConfirmPassword" id="confirm-password" type="password"
+                            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Répétez votre mot de passe">
+                        <span asp-validation-for="ConfirmPassword" class="text-xs text-red-500"></span>
+                    </div>
+                    <p id="password-match" class="text-xs mt-1 text-red-500 hidden">Les mots de passe ne correspondent
+                        pas</p>
+                </div>
+
+                <div class="mt-6">
+                    <button type="submit"
+                        class="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        S'inscrire
+                    </button>
+                </div>
+
+                <div class="text-center mt-4">
+                    <p class="text-sm text-gray-600">
+                        Déjà membre ? <a asp-controller="Account" asp-action="Login"
+                            class="text-blue-600 hover:text-blue-800 font-medium">Connectez-vous</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function () {
+            // Écouteur d'événement pour vérifier la force du mot de passe
+            document.getElementById('password').addEventListener('input', checkPasswordStrength);
+        });
+
+        // Fonction pour vérifier la force du mot de passe
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBars = [
+                document.getElementById('strength-bar-1'),
+                document.getElementById('strength-bar-2'),
+                document.getElementById('strength-bar-3'),
+                document.getElementById('strength-bar-4')
+            ];
+            const hint = document.getElementById('password-hint');
+
+            // Réinitialiser les barres
+            strengthBars.forEach(bar => {
+                bar.classList.remove('bg-red-500', 'bg-yellow-400', 'bg-green-500');
+                bar.classList.add('bg-gray-300');
+            });
+
+            let strength = 0;
+
+            // Longueur minimale
+            if (password.length >= 8) strength += 1;
+
+            // Contient des lettres minuscules et majuscules
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 1;
+
+            // Contient des chiffres
+            if (/\d/.test(password)) strength += 1;
+
+            // Contient des caractères spéciaux
+            if (/[^a-zA-Z0-9]/.test(password)) strength += 1;
+
+            // Mise à jour des barres de force
+            for (let i = 0; i < strength; i++) {
+                if (strength === 1) {
+                    strengthBars[i].classList.add('bg-red-500');
+                } else if (strength === 2) {
+                    strengthBars[i].classList.add('bg-yellow-400');
+                } else {
+                    strengthBars[i].classList.add('bg-green-500');
+                }
+            }
+
+            // Mise à jour du texte d'aide
+            if (strength === 0) {
+                hint.textContent = "Mot de passe très faible";
+                hint.classList.add('text-red-500');
+            } else if (strength === 1) {
+                hint.textContent = "Mot de passe faible";
+                hint.classList.add('text-red-500');
+            } else if (strength === 2) {
+                hint.textContent = "Mot de passe moyen";
+                hint.classList.add('text-yellow-500');
+            } else if (strength === 3) {
+                hint.textContent = "Mot de passe fort";
+                hint.classList.add('text-green-500');
+            } else {
+                hint.textContent = "Mot de passe très fort";
+                hint.classList.add('text-green-500');
+            }
+        }
+    </script>
+
+
+
+
+</body>
+
+</html>
+

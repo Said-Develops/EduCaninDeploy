@@ -1,0 +1,1364 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Club Canin - Actualités</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal {
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            max-height: 85vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        .modal:not(.hidden) .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .active-filter {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .gallery-item {
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+            .gallery-item:hover {
+                transform: scale(1.05);
+            }
+
+        .testimonial {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-left: 4px solid #6366f1;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2">
+                <a asp-action="Index" asp-controller="News" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-indigo-500 text-2xl"></i>
+                    <span class="text-xl font-bold text-indigo-700">Club Canin</span>
+                </a>
+            </div>
+            <!-- Menu Desktop -->
+            <div class="hidden md:flex space-x-6 items-center">
+                <a asp-action="Index" asp-controller="Course"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-dog mr-1"></i> Cours
+                </a>
+                <a asp-controller="DashBoard" asp-action="Index"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
+                </a>
+                <a asp-action="Index" asp-controller="Parameter"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-cogs mr-1"></i> Paramètres
+                </a>
+                <form asp-action="Logout" asp-controller="Account" method="post" class="inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit"
+                            class="flex items-center text-red-600 hover:underline font-medium hover:text-indigo-500 transition">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Déconnexion
+                    </button>
+                </form>
+            </div>
+            <!-- Bouton Menu Mobile -->
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="mobile-menu hidden flex flex-col space-y-2 mt-2 md:hidden px-4 pb-4">
+            <a asp-action="Index" asp-controller="Course"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-dog mr-2"></i> Cours
+            </a>
+            <a asp-controller="DashBoard" asp-action="Index"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+            </a>
+            <a asp-action="Index" asp-controller="Parameter"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-cogs mr-2"></i> Paramètres
+            </a>
+            <form asp-action="Logout" asp-controller="Account" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="flex items-center text-red-600 font-medium hover:text-indigo-500">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Actualités du Club</h1>
+
+        <!-- Filtres -->
+        <div class="mb-8">
+            <h2 class="text-lg font-semibold text-gray-700 mb-3">Filtrer par catégorie :</h2>
+            <div class="flex flex-wrap gap-2">
+                <button class="filter-btn active-filter px-4 py-2 rounded-full text-sm font-medium transition"
+                        data-filter="all">
+                    <i class="fas fa-newspaper mr-1"></i> Toutes les actualités
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm font-medium hover:bg-indigo-100 transition"
+                        data-filter="events">
+                    <i class="fas fa-calendar-alt mr-1"></i> Événements
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm font-medium hover:bg-indigo-100 transition"
+                        data-filter="tips">
+                    <i class="fas fa-lightbulb mr-1"></i> Conseils
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm font-medium hover:bg-indigo-100 transition"
+                        data-filter="success">
+                    <i class="fas fa-trophy mr-1"></i> Succès
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm font-medium hover:bg-indigo-100 transition"
+                        data-filter="announcements">
+                    <i class="fas fa-bullhorn mr-1"></i> Annonces
+                </button>
+            </div>
+        </div>
+
+        <!-- Grille d'articles -->
+        <div id="newsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Les cartes articles sont générées ici -->
+        </div>
+
+        <!-- Modal -->
+        <div id="articleModal"
+             class="modal fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4"
+             aria-hidden="true">
+            <div class="modal-content bg-white rounded-lg max-w-5xl w-full mx-4" role="dialog">
+                <div class="flex justify-between items-center p-6 border-b">
+                    <h2 id="modalTitle" class="text-2xl font-bold text-gray-800"></h2>
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div id="modalContent"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-paw text-indigo-400 mr-2"></i> Club Canin
+                    </h3>
+                    <p class="text-gray-300">
+                        Éduquer et socialiser votre chien dans une ambiance conviviale et
+                        professionnelle.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Accueil</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Nos cours</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Actualités</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2 text-indigo-400"></i> 123 Rue
+                            des Chiens,
+                            75000 Paris
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-2 text-indigo-400"></i> 01 23 45 67 89
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-2 text-indigo-400"></i>
+                            contact@clubcanin.fr
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2025 Club Canin. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        const articles = {
+            1: {
+                title: "Concours d'agilité 2025",
+                accroche : "Venez encourager nos champions et découvrir l'agilité canine en action !",
+                category: "success",
+                image: "/assets/img/News/chien-concours.jpg",
+                content: `
+                    <div class="mb-6">
+                        <img src="https://picsum.photos/seed/agility-main/800/400" alt="Concours d'agilité" class="w-full h-64 object-cover rounded-lg mb-4">
+                    </div>
+
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg mb-6">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-trophy text-yellow-500 text-xl mr-2"></i>
+                            <h3 class="text-lg font-bold text-gray-800">Un succès éclatant !</h3>
+                        </div>
+                        <p class="text-gray-700">Plus de 40 binômes maître/chien ont participé à cette journée exceptionnelle sous un soleil radieux.</p>
+                    </div>
+
+                    <p class='text-gray-700 mb-6'>
+                        Le dimanche 12 mai restera gravé dans les mémoires de tous les participants ! Notre concours annuel d'agilité a battu tous les records de participation avec 42 binômes inscrits, venus de toute la région parisienne. L'ambiance était électrique dès les premières heures du matin, avec des chiens excités et des maîtres concentrés sur leurs derniers réglages.
+                    </p>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">🏆 Le palmarès de la journée</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-yellow-50 p-4 rounded-lg text-center">
+                            <i class="fas fa-medal text-yellow-500 text-2xl mb-2"></i>
+                            <h5 class="font-bold text-gray-800">1ère place</h5>
+                            <p class="text-sm text-gray-600">Julie & Nova (Border Collie)</p>
+                            <p class="text-xs text-gray-500">Temps: 45.23s - 0 fautes</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg text-center">
+                            <i class="fas fa-medal text-gray-400 text-2xl mb-2"></i>
+                            <h5 class="font-bold text-gray-800">2ème place</h5>
+                            <p class="text-sm text-gray-600">Marc & Pixel (Jack Russell)</p>
+                            <p class="text-xs text-gray-500">Temps: 47.15s - 1 faute</p>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-lg text-center">
+                            <i class="fas fa-medal text-orange-500 text-2xl mb-2"></i>
+                            <h5 class="font-bold text-gray-800">3ème place</h5>
+                            <p class="text-sm text-gray-600">Sarah & Dash (Berger Australien)</p>
+                            <p class="text-xs text-gray-500">Temps: 48.89s - 2 fautes</p>
+                        </div>
+                    </div>
+
+                    <div class="testimonial p-4 rounded-lg mb-6">
+                        <div class="flex items-start mb-2">
+                            <img src="https://picsum.photos/seed/julie/60/60" alt="Julie" class="w-12 h-12 rounded-full mr-3">
+                            <div>
+                                <h5 class="font-bold text-gray-800">Julie, gagnante catégorie confirmée</h5>
+                                <p class="text-sm text-gray-600">Propriétaire de Nova, Border Collie</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 italic">"Nova et moi nous entraînons depuis 2 ans au club. Cette victoire, c'est le fruit d'un travail quotidien et de la confiance mutuelle. L'organisation était parfaite, les parcours techniques mais justes. Merci à toute l'équipe !"</p>
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">📸 Galerie photos de l'événement</h4>
+                    <div class="gallery-grid mb-6">
+                        <img src="https://picsum.photos/seed/agility1/200/200" alt="Parcours d'agilité 1" class="gallery-item">
+                        <img src="https://picsum.photos/seed/agility2/200/200" alt="Parcours d'agilité 2" class="gallery-item">
+                        <img src="https://picsum.photos/seed/agility3/200/200" alt="Parcours d'agilité 3" class="gallery-item">
+                        <img src="https://picsum.photos/seed/agility4/200/200" alt="Parcours d'agilité 4" class="gallery-item">
+                        <img src="https://picsum.photos/seed/agility5/200/200" alt="Podium des gagnants" class="gallery-item">
+                        <img src="https://picsum.photos/seed/agility6/200/200" alt="Public et bénévoles" class="gallery-item">
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">🎯 Les temps forts de la journée</h4>
+                    <div class="space-y-4 mb-6">
+                        <div class="flex items-start">
+                            <div class="bg-indigo-100 p-2 rounded-full mr-4 flex-shrink-0">
+                                <i class="fas fa-clock text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">8h00 - Accueil et préparation</h5>
+                                <p class="text-gray-600 text-sm">Mise en place des parcours, échauffement des chiens</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-green-100 p-2 rounded-full mr-4 flex-shrink-0">
+                                <i class="fas fa-running text-green-600"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">9h30 - Début des épreuves débutants</h5>
+                                <p class="text-gray-600 text-sm">15 binômes sur un parcours adapté aux novices</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-yellow-100 p-2 rounded-full mr-4 flex-shrink-0">
+                                <i class="fas fa-hamburger text-yellow-600"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">12h00 - Pause déjeuner conviviale</h5>
+                                <p class="text-gray-600 text-sm">Barbecue et buvette tenue par nos bénévoles dévoués</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-red-100 p-2 rounded-full mr-4 flex-shrink-0">
+                                <i class="fas fa-fire text-red-600"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">14h00 - Épreuves confirmés</h5>
+                                <p class="text-gray-600 text-sm">Les parcours les plus techniques pour les experts</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-purple-100 p-2 rounded-full mr-4 flex-shrink-0">
+                                <i class="fas fa-trophy text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">17h00 - Remise des prix</h5>
+                                <p class="text-gray-600 text-sm">Cérémonie officielle et photos souvenirs</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="text-lg font-bold text-blue-800 mb-2">📅 Rendez-vous en 2026 !</h4>
+                        <p class="text-blue-700">Notez déjà dans vos agendas : le prochain concours d'agilité aura lieu le premier dimanche de mai 2026. Les inscriptions ouvriront en février.</p>
+                    </div>
+                `
+            },
+            2: {
+                title: "Conseils pour un chiot propre",
+                accroche : "Toutes les astuces pour apprendre la propreté à votre chiot en douceur.",
+                category: "tips",
+                image: "/assets/img/News/lavage-chien.webp",
+                content: `
+                    <div class="mb-6">
+                        <img src="https://picsum.photos/seed/puppy-training/800/400" alt="Éducation chiot" class="w-full h-64 object-cover rounded-lg mb-4">
+                    </div>
+
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg mb-6">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-lightbulb text-yellow-500 text-xl mr-2"></i>
+                            <h3 class="text-lg font-bold text-gray-800">Guide complet pour la propreté</h3>
+                        </div>
+                        <p class="text-gray-700">Nos experts partagent leurs meilleurs conseils pour un apprentissage réussi</p>
+                    </div>
+
+                    <p class='text-gray-700 mb-6'>
+                        L'apprentissage de la propreté est souvent le premier défi que rencontrent les nouveaux propriétaires de chiots. Chez Club Canin, nos éducateurs accompagnent chaque année plus de 150 familles dans cette étape cruciale. Voici notre méthode éprouvée pour des résultats rapides et durables.
+                    </p>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">🕐 La règle des horaires fixes</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                        <p class="text-gray-700 mb-4">Un chiot de 2-4 mois doit sortir :</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-utensils text-orange-500 mr-2"></i>
+                                    <span class="text-sm">Après chaque repas (15-30 min)</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-bed text-blue-500 mr-2"></i>
+                                    <span class="text-sm">Au réveil de chaque sieste</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-play text-green-500 mr-2"></i>
+                                    <span class="text-sm">Après les séances de jeu</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-glass-whiskey text-cyan-500 mr-2"></i>
+                                    <span class="text-sm">Après avoir bu</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-moon text-purple-500 mr-2"></i>
+                                    <span class="text-sm">Avant le coucher</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-sun text-yellow-500 mr-2"></i>
+                                    <span class="text-sm">Première sortie du matin</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial p-4 rounded-lg mb-6">
+                        <div class="flex items-start mb-2">
+                            <img src="https://picsum.photos/seed/marie-edu/60/60" alt="Marie" class="w-12 h-12 rounded-full mr-3">
+                            <div>
+                                <h5 class="font-bold text-gray-800">Marie Dubois</h5>
+                                <p class="text-sm text-gray-600">Éducatrice comportementaliste certifiée</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 italic">"La clé du succès ? La régularité et la patience. Un chiot qui fait ses besoins dehors 7 fois d'affilée commence à comprendre le principe. Ne baissez jamais les bras, même après un 'accident' !"</p>
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">✅ La méthode en 5 étapes</h4>
+                    <div class="space-y-4 mb-6">
+                        <div class="flex items-start border-l-4 border-green-500 pl-4">
+                            <div class="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">1</div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Observer les signaux</h5>
+                                <p class="text-gray-600 text-sm">Reniflements au sol, tournage en rond, gémissements</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start border-l-4 border-blue-500 pl-4">
+                            <div class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">2</div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Sortir immédiatement</h5>
+                                <p class="text-gray-600 text-sm">Prendre le chiot dans les bras, sans stress ni précipitation</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start border-l-4 border-yellow-500 pl-4">
+                            <div class="bg-yellow-100 text-yellow-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">3</div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Attendre patiemment</h5>
+                                <p class="text-gray-600 text-sm">Rester dehors jusqu'à ce qu'il fasse ses besoins</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start border-l-4 border-purple-500 pl-4">
+                            <div class="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">4</div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Récompenser immédiatement</h5>
+                                <p class="text-gray-600 text-sm">Friandise, caresses et félicitations chaleureuses</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start border-l-4 border-red-500 pl-4">
+                            <div class="bg-red-100 text-red-600 rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">5</div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Nettoyer sans interaction</h5>
+                                <p class="text-gray-600 text-sm">En cas d'accident, nettoyage silencieux avec produit enzymatique</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">❌ Les erreurs à éviter absolument</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <h5 class="font-bold text-red-700 mb-2">À ne jamais faire :</h5>
+                            <ul class="space-y-1 text-sm text-red-600">
+                                <li>• Gronder après coup</li>
+                                <li>• Mettre le nez dans les excréments</li>
+                                <li>• Nettoyer devant lui</li>
+                                <li>• Sortir seulement 3 fois par jour</li>
+                                <li>• Utiliser des tapis éducateurs trop longtemps</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h5 class="font-bold text-green-700 mb-2">À faire systématiquement :</h5>
+                            <ul class="space-y-1 text-sm text-green-600">
+                                <li>• Féliciter chaque réussite</li>
+                                <li>• Respecter les horaires</li>
+                                <li>• Être patient et bienveillant</li>
+                                <li>• Surveiller l'alimentation</li>
+                                <li>• Nettoyer avec produit spécialisé</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">📊 Statistiques de réussite</h4>
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                            <div>
+                                <div class="text-2xl font-bold text-blue-600">2-3 mois</div>
+                                <div class="text-sm text-gray-600">Âge idéal pour commencer</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-green-600">4-6 semaines</div>
+                                <div class="text-sm text-gray-600">Durée moyenne d'apprentissage</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-purple-600">95%</div>
+                                <div class="text-sm text-gray-600">Taux de réussite avec notre méthode</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-50 p-4 rounded-lg">
+                        <h4 class="text-lg font-bold text-indigo-800 mb-2">🎓 Nos ateliers "Chiot Propre"</h4>
+                        <p class="text-indigo-700 mb-2">Tous les samedis à 10h, séance dédiée aux chiots de 2 à 6 mois</p>
+                        <p class="text-sm text-indigo-600">Inscription obligatoire - 25€ la séance - Groupe limité à 8 chiots</p>
+                    </div>
+                `
+            },
+            3: {
+                title: "Félicitations à notre champion régional !",
+                accroche : "Découvrez le parcours inspirant de notre champion régional 2025.",
+                category: "success",
+                image: "/assets/img/News/chienChampion.jpg",
+                content: `
+                    <div class="mb-6">
+                        <img src="https://picsum.photos/seed/champion-nash/800/400" alt="Clara et Nash champions" class="w-full h-64 object-cover rounded-lg mb-4">
+                    </div>
+
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg mb-6">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-crown text-yellow-500 text-xl mr-2"></i>
+                            <h3 class="text-lg font-bold text-gray-800">Champions régionaux d'obéissance !</h3>
+                        </div>
+                        <p class="text-gray-700">Clara et Nash ont brillamment représenté notre club au niveau régional</p>
+                    </div>
+
+                    <p class='text-gray-700 mb-6'>
+                        C'est avec une immense fierté que nous annonçons la victoire de Clara Moreau et son Border Collie Nash au championnat régional d'obéissance qui s'est tenu les 18 et 19 mai à Meaux. Face à 47 binômes venus de toute l'Île-de-France, notre duo a livré une prestation exceptionnelle, couronnée par la première place en catégorie "Classe 3 - Niveau Excellence".
+                    </p>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">🏆 Le parcours vers la victoire</h4>
+                    <div class="space-y-4 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-blue-500">
+                            <div class="flex items-center justify-between mb-2">
+                                <h5 class="font-bold text-gray-800">Samedi - Épreuves qualificatives</h5>
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">1ère place</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-2">Score: 284/300 points</p>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Marche en laisse : 48/50 pts (excellent)</li>
+                                <li>• Positions statiques : 50/50 pts (parfait)</li>
+                                <li>• Rappel et envoi au loin : 46/50 pts (très bien)</li>
+                                <li>• Rapport d'objet : 45/50 pts (très bien)</li>
+                                <li>• Exercices libres : 47/50 pts (excellent)</li>
+                                <li>• Saut en hauteur : 48/50 pts (excellent)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-green-500">
+                            <div class="flex items-center justify-between mb-2">
+                                <h5 class="font-bold text-gray-800">Dimanche - Finale</h5>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">🥇 Championnes</span>
+                            </div>
+                            <p class="text-gray-600 text-sm mb-2">Score: 289/300 points</p>
+                            <p class="text-sm text-gray-600">Performance remarquable avec seulement 11 points perdus sur l'ensemble des épreuves !</p>
+                        </div>
+                    </div>
+
+                    <div class="testimonial p-4 rounded-lg mb-6">
+                        <div class="flex items-start mb-2">
+                            <img src="https://picsum.photos/seed/clara-champion/60/60" alt="Clara" class="w-12 h-12 rounded-full mr-3">
+                            <div>
+                                <h5 class="font-bold text-gray-800">Clara Moreau</h5>
+                                <p class="text-sm text-gray-600">Championne régionale d'obéissance 2025</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 italic mb-3">"Je n'arrive toujours pas à y croire ! Nash et moi formons une équipe depuis qu'il a 8 semaines. Ce titre, c'est le fruit de 4 années de travail quotidien et de la confiance que m'ont accordée les éducateurs du club. Nash me surprend encore chaque jour par son intelligence et sa capacité d'adaptation."</p>
+                        <p class="text-gray-700 italic">"Un immense merci à Pierre, notre entraîneur, qui nous a suivis depuis le début, et à toute l'équipe du Club Canin pour leur soutien indéfectible !"</p>
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">📈 Un parcours exemplaire</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="font-semibold text-gray-800 mb-3">Historique des performances</h5>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                    <span class="text-sm">2022 - Première compétition</span>
+                                    <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">6ème place</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                    <span class="text-sm">2023 - Championnat départemental</span>
+                                    <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">3ème place</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                    <span class="text-sm">2024 - Régional (1ère participation)</span>
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">2ème place</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-green-50 rounded">
+                                    <span class="text-sm font-bold">2025 - Championnat régional</span>
+                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">🏆 1ère place</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-gray-800 mb-3">Nash en quelques chiffres</h5>
+                            <div class="space-y-3">
+                                <div class="flex items-center">
+                                    <i class="fas fa-birthday-cake text-purple-500 mr-2"></i>
+                                    <span class="text-sm">4 ans (né le 15 mars 2021)</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-dna text-blue-500 mr-2"></i>
+                                    <span class="text-sm">Border Collie pure race</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-weight text-green-500 mr-2"></i>
+                                    <span class="text-sm">22 kg, taille idéale</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-clock text-orange-500 mr-2"></i>
+                                    <span class="text-sm">2h d'entraînement quotidien</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-trophy text-yellow-500 mr-2"></i>
+                                    <span class="text-sm">12 médailles en compétition</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">📸 Moments forts du week-end</h4>
+                    <div class="gallery-grid mb-6">
+                        <img src="https://picsum.photos/seed/nash1/200/200" alt="Nash en action" class="gallery-item">
+                        <img src="https://picsum.photos/seed/nash2/200/200" alt="Clara et Nash" class="gallery-item">
+                        <img src="https://picsum.photos/seed/nash3/200/200" alt="Épreuve du rappel" class="gallery-item">
+                        <img src="https://picsum.photos/seed/nash4/200/200" alt="Remise des prix" class="gallery-item">
+                        <img src="https://picsum.photos/seed/nash5/200/200" alt="Photo officielle" class="gallery-item">
+                        <img src="https://picsum.photos/seed/nash6/200/200" alt="Équipe du club" class="gallery-item">
+                    </div>
+
+                    <div class="testimonial p-4 rounded-lg mb-6">
+                        <div class="flex items-start mb-2">
+                            <img src="https://picsum.photos/seed/pierre-trainer/60/60" alt="Pierre" class="w-12 h-12 rounded-full mr-3">
+                            <div>
+                                <h5 class="font-bold text-gray-800">Pierre Dubois</h5>
+                                <p class="text-sm text-gray-600">Éducateur référent de Clara et Nash</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 italic">"Clara et Nash forment un duo exceptionnel. Leur complicité est visible dès les premiers instants. Nash est un chien d'une intelligence remarquable, mais c'est surtout la patience et la régularité de Clara qui ont permis ce résultat. Ils méritent amplement ce titre !"</p>
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">🎯 Et maintenant ?</h4>
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg mb-6">
+                        <h5 class="font-bold text-purple-800 mb-2">Direction le championnat national !</h5>
+                        <p class="text-purple-700 mb-2">Grâce à cette victoire, Clara et Nash sont qualifiés pour le championnat de France qui aura lieu à Lyon les 15-16 juin.</p>
+                        <div class="flex items-center text-sm text-purple-600">
+                            <i class="fas fa-calendar-check mr-2"></i>
+                            <span>Nous organisons une cagnotte pour soutenir leur déplacement</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-50 p-4 rounded-lg">
+                        <h4 class="text-lg font-bold text-indigo-800 mb-2">🎉 Célébration au club</h4>
+                        <p class="text-indigo-700 mb-2">Retrouvez Clara et Nash le samedi 8 juin à 15h pour une démonstration et un pot de l'amitié</p>
+                        <p class="text-sm text-indigo-600">Venez nombreux féliciter nos championnes !</p>
+                    </div>
+                `
+            },
+            4: {
+                title: "Changements dans l'équipe encadrante",
+                accroche : "De nouveaux visages rejoignent notre équipe pour vous accompagner.",
+                category: "announcements",
+                image: "/assets/img/News/equipeCoach.jpg",
+                content: `
+                    <div class="mb-6">
+                        <img src="https://picsum.photos/seed/team-changes/800/400" alt="Équipe encadrante" class="w-full h-64 object-cover rounded-lg mb-4">
+                    </div>
+
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg mb-6">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-users text-blue-500 text-xl mr-2"></i>
+                            <h3 class="text-lg font-bold text-gray-800">Évolution de notre équipe pédagogique</h3>
+                        </div>
+                        <p class="text-gray-700">De nouveaux visages et de nouvelles compétences pour mieux vous accompagner</p>
+                    </div>
+
+                    <p class='text-gray-700 mb-6'>
+                        Après 15 années de service dévoué, notre équipe pédagogique évolue pour s'adapter aux nouveaux besoins de nos adhérents et intégrer les dernières méthodes d'éducation canine. Cette transition, préparée depuis plusieurs mois, nous permet d'accueillir de nouveaux talents tout en rendant hommage à ceux qui ont fait la réputation de notre club.
+                    </p>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">👋 Nos départs à la retraite</h4>
+                    <div class="space-y-6 mb-8">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-orange-500">
+                            <div class="flex items-start">
+                                <img src="https://picsum.photos/seed/jean-luc/80/80" alt="Jean-Luc" class="w-16 h-16 rounded-full mr-4">
+                                <div class="flex-1">
+                                    <h5 class="text-xl font-bold text-gray-800 mb-2">Jean-Luc Martineau</h5>
+                                    <p class="text-sm text-gray-600 mb-3">Éducateur en chef - 15 ans de service</p>
+                                    <p class="text-gray-700 mb-4">
+                                        Pilier du club depuis sa création, Jean-Luc a formé plus de 2000 binômes maître-chien.
+                                        Spécialiste du comportement canin et ancien maître-chien dans la gendarmerie, il a développé
+                                        notre méthode d'éducation positive qui fait aujourd'hui référence dans la région.
+                                    </p>
+                                    <div class="bg-orange-50 p-3 rounded">
+                                        <p class="text-orange-800 italic text-sm">
+                                            "15 ans au service des chiens et de leurs familles, c'est le plus beau métier du monde.
+                                            Je pars serein en sachant que l'équipe continue avec la même passion et les mêmes valeurs."
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-pink-500">
+                            <div class="flex items-start">
+                                <img src="https://picsum.photos/seed/sophie/80/80" alt="Sophie" class="w-16 h-16 rounded-full mr-4">
+                                <div class="flex-1">
+                                    <h5 class="text-xl font-bold text-gray-800 mb-2">Sophie Leclerc</h5>
+                                    <p class="text-sm text-gray-600 mb-3">Spécialiste chiots et sociabilisation - 8 ans de service</p>
+                                    <p class="text-gray-700 mb-4">
+                                        Vétérinaire de formation reconvertie dans l'éducation canine, Sophie a révolutionné
+                                        nos méthodes de socialisation des chiots. Ses "puppy classes" sont devenues la référence
+                                        pour un apprentissage en douceur et respectueux du développement de chaque animal.
+                                    </p>
+                                    <div class="bg-pink-50 p-3 rounded">
+                                        <p class="text-pink-800 italic text-sm">
+                                            "Chaque chiot qui grandit sereinement grâce à nos méthodes est une victoire.
+                                            Je transmets le flambeau avec confiance à Chloé qui saura perpétuer cette approche bienveillante."
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">🎉 Nos nouvelles recrues</h4>
+                    <div class="space-y-6 mb-8">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500">
+                            <div class="flex items-start">
+                                <img src="https://picsum.photos/seed/maxime/80/80" alt="Maxime" class="w-16 h-16 rounded-full mr-4">
+                                <div class="flex-1">
+                                    <h5 class="text-xl font-bold text-gray-800 mb-2">Maxime Rousseau</h5>
+                                    <p class="text-sm text-gray-600 mb-3">Éducateur comportementaliste certifié</p>
+                                    <p class="text-gray-700 mb-4">
+                                        Diplômé de l'École Nationale Vétérinaire et certifié comportementaliste, Maxime apporte
+                                        une expertise précieuse dans la résolution des troubles comportementaux. Fort de 10 ans
+                                        d'expérience en cabinet privé, il rejoint notre équipe pour développer nos consultations
+                                        spécialisées.
+                                    </p>
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div class="text-center">
+                                            <div class="text-lg font-bold text-green-600">500+</div>
+                                            <div class="text-xs text-gray-600">Chiens accompagnés</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-lg font-bold text-green-600">95%</div>
+                                            <div class="text-xs text-gray-600">Taux de réussite</div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-green-50 p-3 rounded">
+                                        <p class="text-green-800 italic text-sm">
+                                            "J'ai hâte de mettre mes compétences au service des familles du club.
+                                            Chaque problème comportemental a une solution, il suffit de trouver la bonne approche."
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-purple-500">
+                            <div class="flex items-start">
+                                <img src="https://picsum.photos/seed/chloe/80/80" alt="Chloé" class="w-16 h-16 rounded-full mr-4">
+                                <div class="flex-1">
+                                    <h5 class="text-xl font-bold text-gray-800 mb-2">Chloé Martin</h5>
+                                    <p class="text-sm text-gray-600 mb-3">Coordinatrice ateliers juniors (promotion interne)</p>
+                                    <p class="text-gray-700 mb-4">
+                                        Membre du club depuis 5 ans en tant que bénévole active, Chloé prend officiellement
+                                        la responsabilité de nos programmes jeunesse. Éducatrice spécialisée de formation,
+                                        elle développe des méthodes innovantes pour associer enfants et chiens dans l'apprentissage.
+                                    </p>
+                                    <div class="grid grid-cols-3 gap-2 mb-4">
+                                        <div class="text-center">
+                                            <div class="text-sm font-bold text-purple-600">Formation</div>
+                                            <div class="text-xs text-gray-600">Éducatrice spécialisée</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-sm font-bold text-purple-600">Expérience</div>
+                                            <div class="text-xs text-gray-600">5 ans au club</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-sm font-bold text-purple-600">Spécialité</div>
+                                            <div class="text-xs text-gray-600">Enfants & chiens</div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-purple-50 p-3 rounded">
+                                        <p class="text-purple-800 italic text-sm">
+                                            "Travailler avec les enfants et les chiens, c'est ma passion !
+                                            J'ai plein d'idées pour rendre nos ateliers encore plus ludiques et éducatifs."
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">📅 Planning de transition</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-white rounded border-l-4 border-blue-500">
+                                <div>
+                                    <div class="font-semibold text-gray-800">1er juin - 15 juin</div>
+                                    <div class="text-sm text-gray-600">Période de transition et formation croisée</div>
+                                </div>
+                                <i class="fas fa-exchange-alt text-blue-500"></i>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-white rounded border-l-4 border-green-500">
+                                <div>
+                                    <div class="font-semibold text-gray-800">16 juin</div>
+                                    <div class="text-sm text-gray-600">Prise de fonction officielle de Maxime et Chloé</div>
+                                </div>
+                                <i class="fas fa-play text-green-500"></i>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-white rounded border-l-4 border-orange-500">
+                                <div>
+                                    <div class="font-semibold text-gray-800">30 juin</div>
+                                    <div class="text-sm text-gray-600">Pot de départ pour Jean-Luc et Sophie</div>
+                                </div>
+                                <i class="fas fa-glass-cheers text-orange-500"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">🚀 Nouveautés à venir</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg">
+                            <h5 class="font-bold text-blue-800 mb-2">🧠 Consultations comportementales</h5>
+                            <p class="text-blue-700 text-sm mb-2">Avec Maxime, séances individuelles pour résoudre les problèmes spécifiques</p>
+                            <ul class="text-xs text-blue-600 space-y-1">
+                                <li>• Agressivité et réactivité</li>
+                                <li>• Anxiété de séparation</li>
+                                <li>• Troubles de la propreté</li>
+                                <li>• Hyperactivité</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg">
+                            <h5 class="font-bold text-purple-800 mb-2">👨‍👩‍👧‍👦 Ateliers Famille</h5>
+                            <p class="text-purple-700 text-sm mb-2">Avec Chloé, programmes adaptés aux familles avec enfants</p>
+                            <ul class="text-xs text-purple-600 space-y-1">
+                                <li>• Sécurité enfant-chien</li>
+                                <li>• Jeux éducatifs en famille</li>
+                                <li>• Responsabilisation des enfants</li>
+                                <li>• Stages vacances scolaires</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="testimonial p-4 rounded-lg mb-6">
+                        <div class="flex items-start mb-2">
+                            <img src="https://picsum.photos/seed/president/60/60" alt="Président" class="w-12 h-12 rounded-full mr-3">
+                            <div>
+                                <h5 class="font-bold text-gray-800">Michel Durand</h5>
+                                <p class="text-sm text-gray-600">Président du Club Canin</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 italic">"Ces changements marquent une nouvelle étape dans la vie de notre club. Nous remercions chaleureusement Jean-Luc et Sophie pour leur dévouement exemplaire, et nous accueillons avec enthousiasme Maxime et Chloé. Cette transition nous permet d'enrichir notre offre et de répondre encore mieux aux attentes de nos adhérents."</p>
+                    </div>
+
+                    <div class="bg-indigo-50 p-4 rounded-lg">
+                        <h4 class="text-lg font-bold text-indigo-800 mb-2">🎊 Cérémonie de passation</h4>
+                        <p class="text-indigo-700 mb-2">Samedi 30 juin à 17h - Pot de l'amitié et présentation officielle de la nouvelle équipe</p>
+                        <p class="text-sm text-indigo-600">Venez nombreux pour célébrer ces belles années et accueillir nos nouveaux éducateurs !</p>
+                    </div>
+                `
+            },
+
+
+
+
+                            5: {
+            title: "Randonnée canine en forêt de Fontainebleau",
+            accroche : "Partez à l’aventure avec votre chien lors d’une balade conviviale en forêt.",
+            category: "events",
+            image: "/assets/img/News/chienforet.jpg",
+            content: `
+                <div class="mb-6">
+                    <img src="https://picsum.photos/seed/rando-group/800/400" alt="Randonnée en forêt" class="w-full h-64 object-cover rounded-lg mb-4">
+                </div>
+
+                <div class="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg mb-6">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-tree text-green-600 text-xl mr-2"></i>
+                        <h3 class="text-lg font-bold text-gray-800">Retour sur la grande randonnée du club</h3>
+                    </div>
+                    <p class="text-gray-700">Une trentaine de membres, deux éducateurs et plus de 25 chiens pour une aventure inoubliable</p>
+                </div>
+
+                <p class="text-gray-700 mb-6">
+                    Le soleil était au rendez-vous pour cette sortie annuelle très attendue ! Le 28 avril dernier, notre groupe s'est retrouvé dès 9h au parking des Gorges de Franchard pour une journée de découverte et de complicité. L'itinéraire de 8 km, soigneusement choisi par nos éducateurs, a permis à tous de profiter des merveilles de la forêt tout en travaillant la socialisation et l'obéissance dans un cadre naturel exceptionnel.
+                </p>
+
+                <h4 class="text-xl font-bold text-gray-800 mb-4">🥾 Un parcours adapté à tous</h4>
+                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600">8 km</div>
+                            <div class="text-sm text-gray-600">Distance parcourue</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600">3h30</div>
+                            <div class="text-sm text-gray-600">Durée totale</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600">32</div>
+                            <div class="text-sm text-gray-600">Participants</div>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">
+                        Le parcours alternait sentiers forestiers ombragés, clairières ensoleillées et passages rocheux typiques de Fontainebleau.
+                        Chaque étape était l'occasion d'exercices pratiques : croisement en laisse avec d'autres randonneurs, rappel au cœur de la forêt,
+                        pauses "assis-pas bouger" pour les plus joueurs, et même quelques mini-séances d'agility naturel sur les rochers !
+                    </p>
+                </div>
+
+                <h4 class="text-xl font-bold text-gray-800 mb-4">📸 Galerie photo</h4>
+                <div class="gallery-grid mb-6">
+                    <img src="https://picsum.photos/seed/rando-dogs/250/200" alt="Chiens en randonnée" class="gallery-item">
+                    <img src="https://picsum.photos/seed/rando-pause/250/200" alt="Pause en forêt" class="gallery-item">
+                    <img src="https://picsum.photos/seed/rando-jeux/250/200" alt="Jeux canins naturels" class="gallery-item">
+                    <img src="https://picsum.photos/seed/rando-groupe/250/200" alt="Photo de groupe" class="gallery-item">
+                </div>
+
+                <h4 class="text-xl font-bold text-gray-800 mb-4">✨ Les moments forts de la journée</h4>
+                <div class="space-y-4 mb-6">
+                    <div class="flex items-start bg-green-50 p-4 rounded-lg">
+                        <div class="bg-green-100 p-2 rounded-full mr-4 flex-shrink-0">
+                            <i class="fas fa-paw text-green-600"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-gray-800 mb-2">Socialisation réussie</h5>
+                            <p class="text-gray-700 text-sm">Même les chiens les plus timides ont progressé grâce aux encouragements du groupe et aux conseils de nos éducateurs. Luna, habituellement craintive, a réussi à jouer avec trois autres chiens pendant la pause déjeuner !</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start bg-blue-50 p-4 rounded-lg">
+                        <div class="bg-blue-100 p-2 rounded-full mr-4 flex-shrink-0">
+                            <i class="fas fa-mountain text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-gray-800 mb-2">Défis nature relevés</h5>
+                            <p class="text-gray-700 text-sm">Passage sur les rochers, traversée de ruisseaux, escalade de petites buttes... Nos compagnons à quatre pattes ont montré leur agilité naturelle tout en restant attentifs aux consignes de leurs maîtres.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start bg-yellow-50 p-4 rounded-lg">
+                        <div class="bg-yellow-100 p-2 rounded-full mr-4 flex-shrink-0">
+                            <i class="fas fa-camera text-yellow-600"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-gray-800 mb-2">Souvenirs mémorables</h5>
+                            <p class="text-gray-700 text-sm">Notre photographe bénévole, Patricia, a immortalisé ces moments précieux. Plus de 200 photos ont été prises et seront bientôt disponibles sur notre espace membre !</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial p-4 rounded-lg mb-6">
+                    <div class="flex items-start mb-2">
+                        <img src="https://picsum.photos/seed/temoignage-marc/60/60" alt="Marc" class="w-12 h-12 rounded-full mr-3">
+                        <div>
+                            <h5 class="font-bold text-gray-800">Marc Lemoine</h5>
+                            <p class="text-sm text-gray-600">Propriétaire de Bella, Labrador croisé de 2 ans</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic">"C'était la première grande randonnée de Bella, et grâce aux conseils des éducateurs, elle a réussi à rester attentive tout le long du parcours. Un vrai plaisir de partager cette expérience avec d'autres passionnés ! Le cadre était magnifique et l'ambiance vraiment conviviale."</p>
+                </div>
+
+                <h4 class="text-xl font-bold text-gray-800 mb-4">🍽️ Pause pique-nique conviviale</h4>
+                <div class="bg-yellow-50 p-6 rounded-lg mb-6 border-l-4 border-yellow-400">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-utensils text-yellow-600 text-lg mr-2"></i>
+                        <h5 class="font-semibold text-gray-800">Moment de partage au cœur de la forêt</h5>
+                    </div>
+                    <p class="text-gray-700 mb-4">
+                        À mi-parcours, dans une clairière paisible, le club avait prévu une halte gourmande bien méritée.
+                        Au menu : boissons fraîches, gâteaux maison préparés par nos bénévoles, sandwichs variés, et même quelques friandises spéciales pour nos amis à quatre pattes.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-cookie text-yellow-600 mr-2"></i>
+                            <span class="text-gray-700">Gâteaux maison</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-bone text-yellow-600 mr-2"></i>
+                            <span class="text-gray-700">Friandises pour chiens</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-coffee text-yellow-600 mr-2"></i>
+                            <span class="text-gray-700">Boissons chaudes et fraîches</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-heart text-yellow-600 mr-2"></i>
+                            <span class="text-gray-700">Bonne humeur garantie !</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-xl font-bold text-gray-800 mb-4">🏆 Remise des prix</h4>
+                <div class="bg-orange-50 p-4 rounded-lg mb-6">
+                    <p class="text-gray-700 mb-4">En fin de randonnée, nos éducateurs ont remis quelques prix symboliques :</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <i class="fas fa-medal text-orange-600 mr-3"></i>
+                            <span class="text-gray-800 font-medium">🥇 Meilleur rappel :</span>
+                            <span class="text-gray-700 ml-2">Rusty (Berger Australien)</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-medal text-orange-600 mr-3"></i>
+                            <span class="text-gray-800 font-medium">🥈 Plus sociable :</span>
+                            <span class="text-gray-700 ml-2">Mika (Golden Retriever)</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-medal text-orange-600 mr-3"></i>
+                            <span class="text-gray-800 font-medium">🥉 Plus courageux :</span>
+                            <span class="text-gray-700 ml-2">Pixel (Jack Russell)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="text-lg font-bold text-blue-800 mb-2">🚶‍♂️ Prochains rendez-vous nature</h4>
+                    <p class="text-blue-700 mb-3">Fort du succès de cette journée, nous organisons deux nouvelles sorties :</p>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar text-blue-600 mr-2"></i>
+                            <span class="text-blue-800 font-medium">15 septembre :</span>
+                            <span class="text-blue-700 ml-2">Forêt de Sénart (circuit des étangs) - 6 km</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar text-blue-600 mr-2"></i>
+                            <span class="text-blue-800 font-medium">20 octobre :</span>
+                            <span class="text-blue-700 ml-2">Fontainebleau - Circuit des 25 bosses - 10 km</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-blue-600 mt-3">Ouvert à tous les adhérents - Inscription obligatoire</p>
+                </div>
+            `
+        },
+
+            6: {
+                title: "Journée découverte sports canins",
+                accroche : "Initiez-vous à de nouvelles disciplines ludiques avec votre compagnon.",
+                category: "events",
+                image: "/assets/img/News/Sport-chien.jpg",
+                content: `
+                    <div class="mb-6">
+                        <img src="https://picsum.photos/seed/sportday-main/800/400" alt="Journée sports canins" class="w-full h-64 object-cover rounded-lg mb-4">
+                    </div>
+                    <div class="bg-gradient-to-r from-indigo-50 to-pink-50 p-4 rounded-lg mb-6">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-dumbbell text-pink-600 text-xl mr-2"></i>
+                            <h3 class="text-lg font-bold text-gray-800">Initiation à l’agility, canicross & hoopers</h3>
+                        </div>
+                        <p class="text-gray-700">Une journée pour s’initier à différents sports canins, encadrée par des spécialistes du club et des invités extérieurs !</p>
+                    </div>
+                    <p class="text-gray-700 mb-6">
+                        Le 7 avril dernier, le terrain du club s’est transformé en véritable village sportif : 3 parcours, des démonstrations, et la possibilité pour tous les adhérents de tester l’agility, le canicross et le hoopers avec leur chien. Petits et grands, confirmés ou novices, chacun a pu découvrir de nouvelles disciplines dans une ambiance festive.
+                    </p>
+                    <div class="gallery-grid mb-6">
+                        <img src="https://picsum.photos/seed/agilityjump/200/200" alt="Agility Jump" class="gallery-item">
+                        <img src="https://picsum.photos/seed/hoopers/200/200" alt="Hoopers" class="gallery-item">
+                        <img src="https://picsum.photos/seed/canicross/200/200" alt="Canicross" class="gallery-item">
+                        <img src="https://picsum.photos/seed/sportgroup/200/200" alt="Groupe Sport" class="gallery-item">
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-800 mb-4">✨ Les moments forts</h4>
+                    <div class="space-y-4 mb-6">
+                        <div class="flex items-start">
+                            <div class="bg-pink-100 p-2 rounded-full mr-4 flex-shrink-0">
+                                <i class="fas fa-user-friends text-pink-600"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Séance agility pour tous</h5>
+                                <p class="text-gray-600 text-sm">Obstacles, tunnels et slalom ouverts à tous, du chiot au sénior.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 p-2 rounded-full mr-4 flex-shrink-0">
+                                <i class="fas fa-running text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Canicross en binôme</h5>
+                                <p class="text-gray-600 text-sm">Parcours chronométré avec prêt de harnais, pour tester l’endurance et le lien avec son chien.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-green-100 p-2 rounded-full mr-4 flex-shrink-0">
+                                <i class="fas fa-circle text-green-600"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Découverte du hoopers</h5>
+                                <p class="text-gray-600 text-sm">Nouveauté 2025 : un sport sans saut, accessible à tous les chiens.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial p-4 rounded-lg mb-6">
+                        <div class="flex items-start mb-2">
+                            <img src="https://picsum.photos/seed/temoignage-julie/60/60" alt="Julie" class="w-12 h-12 rounded-full mr-3">
+                            <div>
+                                <h5 class="font-bold text-gray-800">Julie Bernard</h5>
+                                <p class="text-sm text-gray-600">Adhérente du club, 1ère participation</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 italic">"Le hoopers, c’est vraiment fun ! Mon chien, qui n’est pas très sportif d’habitude, s’est éclaté. L’équipe du club était super pour expliquer les bases et encourager tout le monde."</p>
+                    </div>
+                    <div class="bg-indigo-50 p-4 rounded-lg">
+                        <h4 class="text-lg font-bold text-indigo-800 mb-2">📆 Rendez-vous l’année prochaine !</h4>
+                        <p class="text-indigo-700">Devant le succès de cette première édition, la Journée Découverte devient un rendez-vous annuel. Notez déjà la date : le 5 avril 2026 !</p>
+                    </div>
+                `
+            },
+
+
+
+
+                                7: {
+            title: "Semaine de la prévention : santé & bien-être canin",
+            accroche : "Participez à nos ateliers pour garantir la santé de votre chien au quotidien.",
+            category: "announcements",
+            image: "/assets/img/News/santeChien.jpg",
+            content: `
+                <div class="mb-6">
+                    <img src="https://picsum.photos/seed/prevention-main/800/400" alt="Prévention santé" class="w-full h-64 object-cover rounded-lg mb-4">
+                </div>
+
+                <div class="bg-gradient-to-r from-rose-50 to-blue-50 p-4 rounded-lg mb-6">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-stethoscope text-blue-500 text-xl mr-2"></i>
+                        <h3 class="text-lg font-bold text-gray-800">Une semaine 100% dédiée à la prévention et au bien-être de vos chiens</h3>
+                    </div>
+                    <p class="text-gray-700">Du 10 au 16 juin : ateliers, conférences et bilans gratuits pour tous les adhérents.</p>
+                </div>
+
+                <h4 class="text-xl font-bold text-gray-800 mb-4">🩺 Ateliers & rendez-vous</h4>
+                <div class="space-y-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-indigo-500 flex items-start">
+                        <i class="fas fa-syringe text-indigo-600 text-2xl mr-4"></i>
+                        <div>
+                            <h5 class="font-bold text-gray-800 mb-2">Bilan santé vétérinaire offert</h5>
+                            <p class="text-gray-600 mb-2">Le Dr. Joubert et son équipe accueillaient tous les chiens pour un check-up (poids, dents, vaccination, détection tiques/puces…)</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-emerald-500 flex items-start">
+                        <i class="fas fa-apple-alt text-emerald-600 text-2xl mr-4"></i>
+                        <div>
+                            <h5 class="font-bold text-gray-800 mb-2">Nutrition & friandises maison</h5>
+                            <p class="text-gray-600 mb-2">Atelier animé par Sophie : recettes faciles, comment lire une étiquette, dangers courants… Dégustation à la clé !</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-amber-500 flex items-start">
+                        <i class="fas fa-dog text-amber-600 text-2xl mr-4"></i>
+                        <div>
+                            <h5 class="font-bold text-gray-800 mb-2">Initiation “massage bien-être”</h5>
+                            <p class="text-gray-600 mb-2">Découverte des gestes de massage pour relaxer son chien, améliorer la récupération sportive, réduire le stress.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-xl font-bold text-gray-800 mb-4">👨‍⚕️ Conférences & sensibilisation</h4>
+                <div class="bg-blue-50 p-4 rounded-lg mb-6">
+                    <ul class="list-disc ml-6 text-blue-700 space-y-2">
+                        <li>Prévenir les parasites de l’été (puces, tiques, moustiques…)</li>
+                        <li>Comprendre la douleur chez le chien : signes d’alerte à repérer</li>
+                        <li>Préparer la canicule : hydratation, exercices, premiers gestes en cas de coup de chaud</li>
+                    </ul>
+                </div>
+
+                <div class="testimonial p-4 rounded-lg mb-6">
+                    <div class="flex items-start mb-2">
+                        <img src="https://picsum.photos/seed/dr-joubert/60/60" alt="Dr Joubert" class="w-12 h-12 rounded-full mr-3">
+                        <div>
+                            <h5 class="font-bold text-gray-800">Dr. Hélène Joubert</h5>
+                            <p class="text-sm text-gray-600">Vétérinaire partenaire</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic">"La prévention, c’est l’assurance d’un chien heureux et en bonne santé. N’hésitez jamais à poser des questions, même sur les sujets qui vous paraissent anodins !"</p>
+                </div>
+
+                <div class="bg-rose-50 p-4 rounded-lg">
+                    <h4 class="text-lg font-bold text-rose-800 mb-2">🔜 Nouvelle édition en 2026 !</h4>
+                    <p class="text-rose-700">Suggestions de thèmes et de partenaires bienvenus auprès de l’équipe encadrante.</p>
+                </div>
+            `
+        },
+                    8: {
+            title: "Challenge photo : Vos chiens en action !",
+            accroche: "Capturez les moments les plus fous de vos compagnons à quatre pattes et tentez votre chance pour remporter notre challenge photo !",
+            category: "events",
+            image: "https://picsum.photos/seed/photo-challenge/600/300",
+            content: `
+                <div class="mb-6">
+                    <img src="https://picsum.photos/seed/photo-action/800/400" alt="Challenge photo" class="w-full h-64 object-cover rounded-lg mb-4">
+                </div>
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg mb-6">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-camera-retro text-orange-500 text-xl mr-2"></i>
+                        <h3 class="text-lg font-bold text-gray-800">Un concours créatif pour tous les membres !</h3>
+                    </div>
+                    <p class="text-gray-700">Envoyez vos plus belles photos de chiens du club en action : sport, jeux, bain, vie de famille… Prix à gagner !</p>
+                </div>
+
+                <h4 class="text-xl font-bold text-gray-800 mb-4">🏅 Les lauréats</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-yellow-500">
+                        <img src="https://picsum.photos/seed/chien-vainqueur/160/120" alt="Oscar" class="w-full h-32 object-cover rounded mb-2">
+                        <h5 class="font-bold text-gray-800 mb-1">Oscar & son frisbee</h5>
+                        <p class="text-sm text-gray-600 mb-1">Catégorie “Sport”</p>
+                        <p class="text-xs text-gray-500">Photo de Léa M.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-orange-500">
+                        <img src="https://picsum.photos/seed/chien-2/160/120" alt="Tara" class="w-full h-32 object-cover rounded mb-2">
+                        <h5 class="font-bold text-gray-800 mb-1">Tara à la plage</h5>
+                        <p class="text-sm text-gray-600 mb-1">Catégorie “Aventure”</p>
+                        <p class="text-xs text-gray-500">Photo de Karim S.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-pink-500">
+                        <img src="https://picsum.photos/seed/chien-3/160/120" alt="Plume" class="w-full h-32 object-cover rounded mb-2">
+                        <h5 class="font-bold text-gray-800 mb-1">Plume et les enfants</h5>
+                        <p class="text-sm text-gray-600 mb-1">Catégorie “Vie de famille”</p>
+                        <p class="text-xs text-gray-500">Photo de Anne L.</p>
+                    </div>
+                </div>
+
+                <h4 class="text-xl font-bold text-gray-800 mb-4">🖼️ Galerie des participants</h4>
+                <div class="gallery-grid mb-6">
+                    <img src="https://picsum.photos/seed/photo1/200/200" alt="photo 1" class="gallery-item">
+                    <img src="https://picsum.photos/seed/photo2/200/200" alt="photo 2" class="gallery-item">
+                    <img src="https://picsum.photos/seed/photo3/200/200" alt="photo 3" class="gallery-item">
+                    <img src="https://picsum.photos/seed/photo4/200/200" alt="photo 4" class="gallery-item">
+                </div>
+
+                <div class="testimonial p-4 rounded-lg mb-6">
+                    <div class="flex items-start mb-2">
+                        <img src="https://picsum.photos/seed/jury/60/60" alt="Jury" class="w-12 h-12 rounded-full mr-3">
+                        <div>
+                            <h5 class="font-bold text-gray-800">Le Jury Photo</h5>
+                            <p class="text-sm text-gray-600">Équipe animation</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic">"Merci à tous pour votre créativité et vos clichés pleins d’amour ! Rendez-vous l’an prochain pour un nouveau challenge, sur le thème… du déguisement !"</p>
+                </div>
+
+                <div class="bg-orange-50 p-4 rounded-lg">
+                    <h4 class="text-lg font-bold text-orange-800 mb-2">🎁 Lots à récupérer dès samedi</h4>
+                    <p class="text-orange-700">Les gagnants sont invités à venir chercher leur panier gourmand lors du cours collectif.</p>
+                </div>
+            `
+        },
+
+                    9: {
+            title: "Atelier premiers secours canins",
+            accroche : "Apprenez les gestes essentiels pour porter secours à votre animal.",
+            category : "tips",
+            image: "/assets/img/News/chien-secours.jpg",
+            content: `
+                <div class="mb-6">
+                    <img src="https://picsum.photos/seed/secours-main/800/400" alt="Secours canin" class="w-full h-64 object-cover rounded-lg mb-4">
+                </div>
+                <div class="bg-gradient-to-r from-indigo-50 to-emerald-50 p-4 rounded-lg mb-6">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-ambulance text-indigo-500 text-xl mr-2"></i>
+                        <h3 class="text-lg font-bold text-gray-800">Initiez-vous aux gestes qui sauvent</h3>
+                    </div>
+                    <p class="text-gray-700">Animé par Pierre Dubois, éducateur secouriste diplômé, cet atelier a permis à 30 membres d’apprendre à réagir en urgence.</p>
+                </div>
+
+                <h4 class="text-xl font-bold text-gray-800 mb-4">🔬 Contenu de l’atelier</h4>
+                <div class="space-y-4 mb-8">
+                    <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-red-500 flex items-start">
+                        <i class="fas fa-heartbeat text-red-500 text-2xl mr-4"></i>
+                        <div>
+                            <h5 class="font-bold text-gray-800 mb-2">Gestes d’urgence</h5>
+                            <ul class="list-disc ml-6 text-gray-700 space-y-1">
+                                <li>Étouffement, morsure, coup de chaleur</li>
+                                <li>Panser une blessure, arrêter un saignement</li>
+                                <li>Position latérale de sécurité canine</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-green-500 flex items-start">
+                        <i class="fas fa-brain text-green-600 text-2xl mr-4"></i>
+                        <div>
+                            <h5 class="font-bold text-gray-800 mb-2">Réagir sans paniquer</h5>
+                            <p class="text-gray-700 mb-2">Savoir évaluer l’état de son chien, appeler à l’aide, sécuriser les autres animaux…</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-xl font-bold text-gray-800 mb-4">📷 Retour en images</h4>
+                <div class="gallery-grid mb-6">
+                    <img src="https://picsum.photos/seed/secours1/200/200" alt="secours 1" class="gallery-item">
+                    <img src="https://picsum.photos/seed/secours2/200/200" alt="secours 2" class="gallery-item">
+                    <img src="https://picsum.photos/seed/secours3/200/200" alt="secours 3" class="gallery-item">
+                    <img src="https://picsum.photos/seed/secours4/200/200" alt="secours 4" class="gallery-item">
+                </div>
+
+                <div class="testimonial p-4 rounded-lg mb-6">
+                    <div class="flex items-start mb-2">
+                        <img src="https://picsum.photos/seed/pierre-dubois/60/60" alt="Pierre" class="w-12 h-12 rounded-full mr-3">
+                        <div>
+                            <h5 class="font-bold text-gray-800">Pierre Dubois</h5>
+                            <p class="text-sm text-gray-600">Éducateur secouriste</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 italic">"Bravo à tous ! Mieux vaut s’entraîner en club et ne jamais en avoir besoin… que l’inverse. Merci pour votre implication et vos questions !"</p>
+                </div>
+
+                <div class="bg-indigo-50 p-4 rounded-lg">
+                    <h4 class="text-lg font-bold text-indigo-800 mb-2">🔄 Nouvelle session en novembre</h4>
+                    <p class="text-indigo-700">Inscrivez-vous dès maintenant auprès du secrétariat. Places limitées !</p>
+                </div>
+            `
+        }
+        };
+
+        const container = document.getElementById('newsContainer');
+        Object.entries(articles).forEach(([id, article]) => {
+            const card = document.createElement('article');
+            card.className =
+                "news-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 card-hover";
+            card.setAttribute('data-category', article.category);
+            card.setAttribute('data-article', id);
+            card.innerHTML = `
+        <img src="${article.image}" alt="${article.title}" class="w-full h-52 object-cover">
+        <div class="p-6">
+          <h3 class="text-xl font-bold text-gray-800 mb-2">${article.title}</h3>
+          <p class="text-gray-600 mb-4">${article.accroche}</p>
+          <button class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-2 rounded-md font-medium hover:from-indigo-600 hover:to-purple-700 transition">
+            Lire la suite <i class="fas fa-arrow-right ml-2"></i>
+          </button>
+        </div>`;
+            container.appendChild(card);
+        });
+
+        document.querySelectorAll('.news-card button').forEach(button => {
+            button.addEventListener('click', event => {
+                const article = button.closest('.news-card');
+                const id = article.dataset.article;
+                document.getElementById('modalTitle').innerText = articles[id].title;
+                document.getElementById('modalContent').innerHTML = articles[id].content;
+                document.getElementById('articleModal').classList.remove('hidden');
+            });
+        });
+
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('articleModal').classList.add('hidden');
+        });
+
+        window.addEventListener('click', e => {
+            const modal = document.getElementById('articleModal');
+            if (e.target === modal) modal.classList.add('hidden');
+        });
+
+        document.getElementById('mobile-menu-button').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.dataset.filter;
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active-filter'));
+                btn.classList.add('active-filter');
+
+                document.querySelectorAll('.news-card').forEach(card => {
+                    card.classList.toggle('hidden', filter !== 'all' && card.dataset.category !== filter);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

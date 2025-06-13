@@ -1,0 +1,281 @@
+﻿@using EduCanin.Models.Entities
+@model EduCanin.ViewModels.DogEditViewModel
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Modification de @Model.Name | Club Canin EduCanin</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        .paw-pattern {
+            background-color: #f3f4f6;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e5e7eb' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M12 6a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zM6 12a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zM12 28a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zM6 44a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8zm16 0a4 4 0 110 8 4 4 0 010-8z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .input-focus:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            outline: none;
+        }
+    </style>
+</head>
+
+<body class="paw-pattern min-h-screen font-sans">
+    <div class="absolute top-4 left-4">
+        <a asp-action="Index" asp-controller="DashBoard"
+           class="btn-back inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm text-gray-700 rounded-lg shadow-md hover:bg-white/90 hover:text-gray-900 border border-gray-200">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Retour a mes chiens
+        </a>
+    </div>
+    <div class="min-h-screen flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <!-- Logo et titre -->
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-600 mb-4">
+                <i class="fas fa-edit text-white text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800">Club Canin EduCanin</h1>
+            <p class="text-gray-600 mt-1">Modifier les informations de <strong>@Model.Name</strong></p>
+        </div>
+
+        <!-- Formulaire -->
+        <div class="w-full max-w-lg bg-white rounded-xl shadow-lg overflow-hidden">
+            <!-- En-tête du formulaire -->
+            <div class="bg-amber-600 py-4 px-6 text-white">
+                <h2 class="text-xl font-semibold flex items-center">
+                    <i class="fas fa-edit mr-2"></i>
+                    Modification de @Model.Name
+                </h2>
+            </div>
+
+            <form asp-action="Edit" method="post" novalidate class="p-6">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Id)
+
+                <!-- Validation Summary -->
+                <div asp-validation-summary="ModelOnly" class="mb-5 px-4 py-3 rounded bg-red-50 text-red-700 text-sm">
+                </div>
+
+                <div class="space-y-5">
+                    <!-- Nom -->
+                    <div>
+                        <label asp-for="Name" class="block text-gray-700 font-medium mb-2 flex items-center">
+                            <i class="fas fa-tag mr-2 text-amber-500"></i>
+                            Nom du chien
+                        </label>
+                        <div class="relative">
+                            <input asp-for="Name" placeholder="Ex: Rex, Luna, Max..." class="w-full border border-gray-300 rounded-lg px-4 py-3 pl-10
+                                input-focus transition-colors" />
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <i class="fas fa-dog text-gray-400"></i>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Name" class="text-red-600 text-sm mt-1 block"></span>
+                    </div>
+
+                    <!-- Deux colonnes pour Date et Sexe -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Date de naissance -->
+                        <div>
+                            <label asp-for="BirthDate" class="block text-gray-700 font-medium mb-2 flex items-center">
+                                <i class="fas fa-calendar-alt mr-2 text-amber-500"></i>
+                                Date de naissance
+                            </label>
+                            <div class="relative">
+                                <input asp-for="BirthDate" type="date" id="birthDate"
+                                       min="@DateTime.Now.AddYears(-30).ToString("yyyy-MM-dd")"
+                                       max="@DateTime.Now.ToString("yyyy-MM-dd")" class="w-full border border-gray-300 rounded-lg px-4 py-3 pl-10
+                                    input-focus transition-colors" />
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="fas fa-birthday-cake text-gray-400"></i>
+                                </div>
+                            </div>
+                            <span asp-validation-for="BirthDate" class="text-red-600 text-sm mt-1 block"></span>
+                            <span id="birthDateError" class="text-red-600 text-sm mt-1 hidden">
+                                La date de naissance
+                                n'est pas valide
+                            </span>
+                            <p class="text-gray-500 text-xs mt-1">Le chien doit avoir entre 0 et 30 ans</p>
+                        </div>
+
+                        <!-- Sexe -->
+                        <div>
+                            <label asp-for="DogGender" class="block text-gray-700 font-medium mb-2 flex items-center">
+                                <i class="fas fa-venus-mars mr-2 text-amber-500"></i>
+                                Sexe
+                            </label>
+                            <div class="relative">
+                                <select asp-for="DogGender" asp-items="Html.GetEnumSelectList<DogGender>()" class="w-full border border-gray-300 rounded-lg px-4 py-3 pl-10
+                                        input-focus transition-colors appearance-none">
+                                    <option value="">-- Sélectionner --</option>
+                                </select>
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="fas fa-venus-mars text-gray-400"></i>
+                                </div>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-400"></i>
+                                </div>
+                            </div>
+                            <span asp-validation-for="DogGender" class="text-red-600 text-sm mt-1 block"></span>
+                        </div>
+                    </div>
+
+                    <!-- Race -->
+                    <div>
+                        <label asp-for="BreedId" class="block text-gray-700 font-medium mb-2 flex items-center">
+                            <i class="fas fa-bone mr-2 text-amber-500"></i>
+                            Race
+                        </label>
+                        <div class="relative">
+                            <select asp-for="BreedId" asp-items="Model.Breeds" class="w-full border border-gray-300 rounded-lg px-4 py-3 pl-10
+                                input-focus transition-colors appearance-none">
+                                <option value="">-- Sélectionner une race --</option>
+                            </select>
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <i class="fas fa-paw text-gray-400"></i>
+                            </div>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <i class="fas fa-chevron-down text-gray-400"></i>
+                            </div>
+                        </div>
+                        <span asp-validation-for="BreedId" class="text-red-600 text-sm mt-1 block"></span>
+                    </div>
+
+
+                    <!-- Deux colonnes pour Poids et Taille -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Poids -->
+                        <div>
+                            <label asp-for="Weight" class="block text-gray-700 font-medium mb-2 flex items-center">
+                                <i class="fas fa-weight mr-2 text-amber-500"></i>
+                                Poids (kg)
+                            </label>
+                            <div class="relative">
+                                <input asp-for="Weight" type="number" min="0" max="200" placeholder="Ex: 25" class="w-full border border-gray-300 rounded-lg px-4 py-3 pl-10
+                                    input-focus transition-colors" />
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="fas fa-weight text-gray-400"></i>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Weight" class="text-red-600 text-sm mt-1 block"></span>
+                        </div>
+
+                        <!-- Taille -->
+                        <div>
+                            <label asp-for="Height" class="block text-gray-700 font-medium mb-2 flex items-center">
+                                <i class="fas fa-ruler-vertical mr-2 text-amber-500"></i>
+                                Taille (cm)
+                            </label>
+                            <div class="relative">
+                                <input asp-for="Height" type="number" min="0" max="200" placeholder="Ex: 60" class="w-full border border-gray-300 rounded-lg px-4 py-3 pl-10
+                                    input-focus transition-colors" />
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i class="fas fa-ruler text-gray-400"></i>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Height" class="text-red-600 text-sm mt-1 block"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Information -->
+                <div class="mt-6 p-4 bg-amber-50 rounded-lg border border-amber-100 flex items-start">
+                    <i class="fas fa-info-circle text-amber-500 mt-0.5 mr-3"></i>
+                    <p class="text-sm text-amber-700">
+                        Vous pouvez modifier toutes les informations de votre compagnon.
+                        Les modifications seront sauvegardées immédiatement.
+                    </p>
+                </div>
+
+                <!-- Actions -->
+                <div class="mt-6 flex items-center justify-between">
+                    <a asp-action="Index" asp-controller="DashBoard"
+                       class="flex items-center text-gray-600 hover:text-amber-600 transition-colors">
+                        <i class="fas fa-times mr-2"></i>
+                        Annuler
+                    </a>
+                    <div class="flex gap-3">
+                        <button type="submit" id="submitButton" class="flex items-center bg-amber-600 hover:bg-amber-700 text-white font-medium
+                                px-6 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2
+                                focus:ring-amber-400 focus:ring-offset-2">
+                            <i class="fas fa-save mr-2"></i>
+                            Sauvegarder
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center text-gray-500 text-sm">
+            <p>© @DateTime.Now.Year Club Canin EduCanin - Tous droits réservés</p>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        // Définir la date maximale pour le champ de date de naissance (aujourd'hui)
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date().toISOString().split('T')[0];
+            const birthDateInput = document.getElementById('birthDate');
+            birthDateInput.setAttribute('max', today);
+
+            // Validation supplémentaire lors de la saisie
+            birthDateInput.addEventListener('change', function () {
+                validateBirthDate();
+            });
+
+            // Validation du formulaire avant soumission
+            document.querySelector('form').addEventListener('submit', function (event) {
+                if (!validateBirthDate()) {
+                    event.preventDefault();
+                }
+            });
+
+            function validateBirthDate() {
+                const birthDate = new Date(birthDateInput.value);
+                const currentDate = new Date();
+                const minDate = new Date();
+                minDate.setFullYear(currentDate.getFullYear() - 30);
+                const errorElement = document.getElementById('birthDateError');
+
+                // Réinitialiser la classe et le message d'erreur
+                birthDateInput.classList.remove('border-red-500');
+                errorElement.classList.add('hidden');
+
+                // Vérifier si la date est dans le futur
+                if (birthDate > currentDate) {
+                    birthDateInput.classList.add('border-red-500');
+                    errorElement.textContent = "La date de naissance ne peut pas être dans le futur";
+                    errorElement.classList.remove('hidden');
+                    return false;
+                }
+
+                // Vérifier si la date est trop ancienne (plus de 30 ans)
+                if (birthDate < minDate) {
+                    birthDateInput.classList.add('border-red-500');
+                    errorElement.textContent = "L'âge maximum d'un chien est de 30 ans";
+                    errorElement.classList.remove('hidden');
+                    return false;
+                }
+
+                return true;
+            }
+        });
+    </script>
+</body>
+
+</html>

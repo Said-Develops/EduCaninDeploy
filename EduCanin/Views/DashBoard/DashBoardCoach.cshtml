@@ -1,0 +1,447 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Coach - Club Canin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-menu {
+            display: none;
+        }
+        @@media (max-width: 768px) {
+            .mobile-menu.active
+
+        {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: white;
+            padding: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+        }
+
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-paw text-indigo-500 text-2xl"></i>
+                <span class="text-xl font-bold text-indigo-700">Club Canin</span>
+            </div>
+
+            <div class="hidden md:flex space-x-6">
+                <a href="#" class="text-indigo-700 font-medium hover:text-indigo-500 transition">Accueil</a>
+                <a class="text-gray-600 font-medium hover:text-indigo-500 transition">Profil</a>
+                <a asp-controller="DashBoard" asp-action="Index"
+                    class="text-gray-600 font-medium hover:text-indigo-500 transition">Dashboard</a>
+                <form asp-action="Logout" asp-controller="Account" method="post" class="inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit"
+                        class="text-red-600 hover:underline font-medium hover:text-indigo-500 transition"><i
+                            class="fas fa-sign-out-alt mr-1"></i> Déconnexion
+                    </button>
+                </form>
+            </div>
+
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu hidden flex flex-col space-y-2 mt-2 md:hidden">
+            <a href="#" class="block py-2 px-4 text-indigo-700 font-medium">Accueil</a>
+            <a href="#" class="block py-2 px-4 text-gray-600 font-medium">Cours</a>
+            <a href="#" class="block py-2 px-4 text-gray-600 font-medium">Inscriptions</a>
+            <a href="#" class="block py-2 px-4 text-gray-600 font-medium">Profil</a>
+            <form asp-action="Logout" asp-controller="Account" method="post" class="block">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="w-full py-2 px-4 text-gray-600 font-medium text-left">Se
+                    déconnecter</button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <div class="bg-blue-50 rounded-xl p-6 mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
+                <i class="fas fa-user-tie text-blue-600 mr-2"></i>
+                Bienvenue Clara, voici vos prochaines séances
+            </h1>
+            <div class="flex flex-wrap items-center justify-between mt-4">
+                <div class="flex items-center space-x-4 mb-2 md:mb-0">
+                    <div class="bg-blue-100 p-3 rounded-full">
+                        <i class="fas fa-calendar-check text-blue-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Séances aujourd'hui</p>
+                        <p class="font-medium">2 séances</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4 mb-2 md:mb-0">
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <i class="fas fa-dog text-green-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Participants cette semaine</p>
+                        <p class="font-medium">12 chiens</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="bg-purple-100 p-3 rounded-full">
+                        <i class="fas fa-star text-purple-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Note moyenne</p>
+                        <p class="font-medium">4.8/5</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mes Séances Section -->
+        <section class="mb-12">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-800">
+                    <i class="fas fa-calendar-alt text-blue-600 mr-2"></i>
+                    Mes Séances à Venir
+                </h2>
+                <button id="create-session-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition font-medium">
+                    <i class="fas fa-plus mr-1"></i> Créer une séance
+                </button>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <!-- Table Header -->
+                <div class="hidden md:grid grid-cols-12 bg-gray-50 px-6 py-3 border-b border-gray-200">
+                    <div class="col-span-2 font-medium text-gray-700">
+                        <i class="fas fa-calendar-day mr-2 text-blue-600"></i>Date
+                    </div>
+                    <div class="col-span-2 font-medium text-gray-700">
+                        <i class="fas fa-clock mr-2 text-blue-600"></i>Heure
+                    </div>
+                    <div class="col-span-4 font-medium text-gray-700">
+                        <i class="fas fa-bone mr-2 text-blue-600"></i>Type de cours
+                    </div>
+                    <div class="col-span-2 font-medium text-gray-700">
+                        <i class="fas fa-users mr-2 text-blue-600"></i>Participants
+                    </div>
+                    <div class="col-span-2 font-medium text-gray-700">
+                        Actions
+                    </div>
+                </div>
+
+                <!-- Table Rows -->
+                <!-- Session 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition">
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-calendar-day text-blue-600 mr-2 md:hidden"></i>
+                        <span class="font-medium">Lun 15 mai</span>
+                    </div>
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-clock text-blue-600 mr-2 md:hidden"></i>
+                        <span>10:00 - 11:30</span>
+                    </div>
+                    <div class="col-span-4 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-bone text-blue-600 mr-2 md:hidden"></i>
+                        <span>Éducation 6-12 mois (max 8 chiens)</span>
+                    </div>
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-users text-blue-600 mr-2 md:hidden"></i>
+                        <span>6/8 inscrits</span>
+                    </div>
+                    <div class="col-span-2 flex items-center">
+                        <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition font-medium">
+                            <i class="fas fa-eye mr-1"></i> Voir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Session 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition">
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-calendar-day text-blue-600 mr-2 md:hidden"></i>
+                        <span class="font-medium">Mer 17 mai</span>
+                    </div>
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-clock text-blue-600 mr-2 md:hidden"></i>
+                        <span>14:00 - 15:30</span>
+                    </div>
+                    <div class="col-span-4 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-bone text-blue-600 mr-2 md:hidden"></i>
+                        <span>Agility débutant (max 6 chiens)</span>
+                    </div>
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-users text-blue-600 mr-2 md:hidden"></i>
+                        <span>5/6 inscrits</span>
+                    </div>
+                    <div class="col-span-2 flex items-center">
+                        <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition font-medium">
+                            <i class="fas fa-eye mr-1"></i> Voir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Session 3 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 hover:bg-gray-50 transition">
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-calendar-day text-blue-600 mr-2 md:hidden"></i>
+                        <span class="font-medium">Sam 20 mai</span>
+                    </div>
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-clock text-blue-600 mr-2 md:hidden"></i>
+                        <span>09:30 - 11:00</span>
+                    </div>
+                    <div class="col-span-4 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-bone text-blue-600 mr-2 md:hidden"></i>
+                        <span>Socialisation chiots (max 10 chiens)</span>
+                    </div>
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-users text-blue-600 mr-2 md:hidden"></i>
+                        <span>8/10 inscrits</span>
+                    </div>
+                    <div class="col-span-2 flex items-center">
+                        <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition font-medium">
+                            <i class="fas fa-eye mr-1"></i> Voir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Historique Section -->
+        <section>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-800">
+                    <i class="fas fa-history text-blue-600 mr-2"></i>
+                    Historique des Séances
+                </h2>
+                <div class="flex space-x-2">
+                    <select id="filter-type" class="px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Tous les types</option>
+                        <option value="education">Éducation</option>
+                        <option value="agility">Agility</option>
+                        <option value="socialisation">Socialisation</option>
+                    </select>
+                    <input type="date" id="filter-date" class="px-3 py-2 bg-white border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <!-- Table Header -->
+                <div class="hidden md:grid grid-cols-12 bg-gray-50 px-6 py-3 border-b border-gray-200">
+                    <div class="col-span-2 font-medium text-gray-700">
+                        <i class="fas fa-calendar-day mr-2 text-blue-600"></i>Date
+                    </div>
+                    <div class="col-span-3 font-medium text-gray-700">
+                        <i class="fas fa-bone mr-2 text-blue-600"></i>Type de cours
+                    </div>
+                    <div class="col-span-2 font-medium text-gray-700">
+                        <i class="fas fa-users mr-2 text-blue-600"></i>Participants
+                    </div>
+                    <div class="col-span-3 font-medium text-gray-700">
+                        <i class="fas fa-star mr-2 text-blue-600"></i>Retours
+                    </div>
+                    <div class="col-span-2 font-medium text-gray-700">
+                        Actions
+                    </div>
+                </div>
+
+                <!-- Table Rows -->
+                <!-- Session 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition">
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-calendar-day text-blue-600 mr-2 md:hidden"></i>
+                        <span class="font-medium">Sam 13 mai</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-bone text-blue-600 mr-2 md:hidden"></i>
+                        <span>Éducation 6-12 mois</span>
+                    </div>
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-users text-blue-600 mr-2 md:hidden"></i>
+                        <span>7/8 inscrits</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-star text-blue-600 mr-2 md:hidden"></i>
+                        <div class="flex items-center">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="ml-2 text-sm text-gray-600">(4.7/5)</span>
+                        </div>
+                    </div>
+                    <div class="col-span-2 flex items-center">
+                        <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition font-medium">
+                            <i class="fas fa-file-alt mr-1"></i> Rapport
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Session 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition">
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-calendar-day text-blue-600 mr-2 md:hidden"></i>
+                        <span class="font-medium">Mer 10 mai</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-bone text-blue-600 mr-2 md:hidden"></i>
+                        <span>Agility débutant</span>
+                    </div>
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-users text-blue-600 mr-2 md:hidden"></i>
+                        <span>6/6 inscrits</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-star text-blue-600 mr-2 md:hidden"></i>
+                        <div class="flex items-center">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span class="ml-2 text-sm text-gray-600">(5/5)</span>
+                        </div>
+                    </div>
+                    <div class="col-span-2 flex items-center">
+                        <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition font-medium">
+                            <i class="fas fa-file-alt mr-1"></i> Rapport
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Session 3 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 hover:bg-gray-50 transition">
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-calendar-day text-blue-600 mr-2 md:hidden"></i>
+                        <span class="font-medium">Sam 6 mai</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-bone text-blue-600 mr-2 md:hidden"></i>
+                        <span>Socialisation chiots</span>
+                    </div>
+                    <div class="col-span-2 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-users text-blue-600 mr-2 md:hidden"></i>
+                        <span>9/10 inscrits</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-star text-blue-600 mr-2 md:hidden"></i>
+                        <div class="flex items-center">
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <span class="ml-2 text-sm text-gray-600">(4.2/5)</span>
+                        </div>
+                    </div>
+                    <div class="col-span-2 flex items-center">
+                        <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition font-medium">
+                            <i class="fas fa-file-alt mr-1"></i> Rapport
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center">
+                <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition font-medium">
+                    <i class="fas fa-history mr-1"></i> Voir plus
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-paw text-blue-400 mr-2"></i> Coach Canin
+                    </h3>
+                    <p class="text-gray-300">Plateforme professionnelle pour entraîneurs canins</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Centre d'aide</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Contact technique</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Documentation</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Ressources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Formations</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Outils pédagogiques</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Forum des coachs</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2023 Coach Canin Pro. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Create session button
+        document.getElementById('create-session-btn').addEventListener('click', function() {
+            alert('Ouverture du formulaire de création de séance');
+        });
+
+        // View session buttons
+        const viewButtons = document.querySelectorAll('[class*="bg-blue-100"]');
+
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Affichage des détails de la séance avec liste des participants');
+            });
+        });
+
+        // Filter functionality
+        const filterType = document.getElementById('filter-type');
+        const filterDate = document.getElementById('filter-date');
+
+        filterType.addEventListener('change', applyFilters);
+        filterDate.addEventListener('change', applyFilters);
+
+        function applyFilters() {
+            alert('Filtrage des séances par type: ' + filterType.value + ' et date: ' + filterDate.value);
+            // In a real app, this would filter the displayed sessions
+        }
+    </script>
+</body>
+</html>

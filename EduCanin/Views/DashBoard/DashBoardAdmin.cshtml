@@ -1,0 +1,481 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Club Canin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            transition: all 0.3s;
+        }
+        @@media (max-width: 768px) {
+            .navbar-menu
+
+        {
+            display: none;
+        }
+
+        .navbar-menu.active {
+            display: flex;
+        }
+
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Top Navbar -->
+    <nav class="navbar bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-paw text-blue-600 text-2xl mr-2"></i>
+                        <span class="text-xl font-semibold">Club Canin</span>
+                    </div>
+                </div>
+                <div class="hidden md:ml-6 md:flex md:items-center md:space-x-4">
+                    <a href="#" class="px-3 py-2 rounded-md text-sm font-medium bg-blue-100 text-blue-700">Accueil</a>
+                    <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100">Utilisateurs</a>
+                    <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100">Chiens</a>
+                    <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100">Cours</a>
+                    <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100">Séances</a>
+                    <a href="#" class="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100">Statistiques</a>
+                </div>
+                <div class="flex items-center">
+                    <div class="relative mr-4">
+                        <i class="fas fa-bell text-gray-500 text-xl"></i>
+                        <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                    </div>
+                    <div class="flex items-center">
+                        <img class="h-8 w-8 rounded-full" src="https://randomuser.me/api/portraits/women/44.jpg" alt="">
+                        <span class="ml-2 text-sm font-medium">Stéphanie</span>
+                    </div>
+                    <button class="md:hidden ml-4 p-2 rounded-md text-gray-600 hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="navbar-menu md:hidden bg-white border-t border-gray-200 px-2 pt-2 pb-3 hidden">
+            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium bg-blue-100 text-blue-700">Accueil</a>
+            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100">Utilisateurs</a>
+            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100">Chiens</a>
+            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100">Cours</a>
+            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100">Séances</a>
+            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100">Statistiques</a>
+            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100 border-t mt-2">Déconnexion</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Bienvenue Stéphanie, voici un aperçu de l'activité du club</h1>
+            <p class="text-gray-600">Dernière mise à jour: aujourd'hui à 09:45</p>
+        </div>
+
+        <!-- Overview Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+            <!-- Users Card -->
+            <div class="bg-white rounded-lg shadow p-6 card-hover transition">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                        <i class="fas fa-users text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Utilisateurs</p>
+                        <p class="text-2xl font-bold">142</p>
+                        <p class="text-xs text-green-500">+5% ce mois</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dogs Card -->
+            <div class="bg-white rounded-lg shadow p-6 card-hover transition">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                        <i class="fas fa-dog text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Chiens</p>
+                        <p class="text-2xl font-bold">189</p>
+                        <p class="text-xs text-green-500">+8% ce mois</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Courses Card -->
+            <div class="bg-white rounded-lg shadow p-6 card-hover transition">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
+                        <i class="fas fa-graduation-cap text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Types de cours</p>
+                        <p class="text-2xl font-bold">8</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sessions Card -->
+            <div class="bg-white rounded-lg shadow p-6 card-hover transition">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+                        <i class="fas fa-calendar-alt text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Séances</p>
+                        <p class="text-2xl font-bold">24</p>
+                        <p class="text-xs text-green-500">3 nouvelles</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Occupancy Card -->
+            <div class="bg-white rounded-lg shadow p-6 card-hover transition">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4">
+                        <i class="fas fa-chart-pie text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 text-sm">Remplissage</p>
+                        <p class="text-2xl font-bold">78%</p>
+                        <p class="text-xs text-green-500">+12% vs mois dernier</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Section -->
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-gray-800">
+                    <i class="fas fa-users text-blue-500 mr-2"></i>
+                    Utilisateurs
+                </h2>
+                <div class="flex space-x-2">
+                    <input type="text" placeholder="Rechercher..." class="px-3 py-1 border border-gray-300 rounded text-sm">
+                    <button class="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition">
+                        <i class="fas fa-plus mr-1"></i> Ajouter
+                    </button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chiens</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10">
+                                        <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/12.jpg" alt="">
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">Sophie Martin</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">sophie.martin@example.com</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-edit"></i></button>
+                                <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10">
+                                        <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">Pierre Dubois</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">pierre.dubois@example.com</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-edit"></i></button>
+                                <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10">
+                                        <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/45.jpg" alt="">
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">Emma Leroy</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">emma.leroy@example.com</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-edit"></i></button>
+                                <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
+                <div class="text-sm text-gray-500">
+                    Affichage de 1 à 3 sur 142 utilisateurs
+                </div>
+                <div class="flex space-x-2">
+                    <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">Précédent</button>
+                    <button class="px-3 py-1 bg-blue-600 text-white rounded text-sm">1</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">2</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">3</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">Suivant</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses and Sessions -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Courses -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-gray-800">
+                        <i class="fas fa-graduation-cap text-blue-500 mr-2"></i>
+                        Types de cours
+                    </h2>
+                    <button class="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition">
+                        <i class="fas fa-plus mr-1"></i> Créer
+                    </button>
+                </div>
+                <div class="divide-y divide-gray-200">
+                    <div class="px-6 py-4 flex justify-between items-center hover:bg-gray-50 transition">
+                        <div>
+                            <h3 class="font-medium">Éducation chiots (2-6 mois)</h3>
+                            <p class="text-sm text-gray-500">Durée: 45 min - Max: 8 chiens</p>
+                        </div>
+                        <div>
+                            <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 flex justify-between items-center hover:bg-gray-50 transition">
+                        <div>
+                            <h3 class="font-medium">Agility débutant</h3>
+                            <p class="text-sm text-gray-500">Durée: 1h - Max: 6 chiens</p>
+                        </div>
+                        <div>
+                            <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 flex justify-between items-center hover:bg-gray-50 transition">
+                        <div>
+                            <h3 class="font-medium">Obéissance avancée</h3>
+                            <p class="text-sm text-gray-500">Durée: 1h - Max: 5 chiens</p>
+                        </div>
+                        <div>
+                            <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sessions -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-gray-800">
+                        <i class="fas fa-calendar-alt text-blue-500 mr-2"></i>
+                        Séances à venir
+                    </h2>
+                    <button class="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition">
+                        <i class="fas fa-plus mr-1"></i> Planifier
+                    </button>
+                </div>
+                <div class="divide-y divide-gray-200">
+                    <div class="px-6 py-4 hover:bg-gray-50 transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium">Éducation chiots (2-6 mois)</h3>
+                                <p class="text-sm text-gray-500">Mer 15 juin - 10:00 (Clara)</p>
+                            </div>
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">6/8 inscrits</span>
+                        </div>
+                        <div class="mt-2 flex justify-end space-x-2">
+                            <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 hover:bg-gray-50 transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium">Agility débutant</h3>
+                                <p class="text-sm text-gray-500">Sam 18 juin - 14:00 (Thomas)</p>
+                            </div>
+                            <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">4/6 inscrits</span>
+                        </div>
+                        <div class="mt-2 flex justify-end space-x-2">
+                            <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 hover:bg-gray-50 transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium">Obéissance avancée</h3>
+                                <p class="text-sm text-gray-500">Lun 20 juin - 18:30 (Sophie)</p>
+                            </div>
+                            <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">2/5 inscrits</span>
+                        </div>
+                        <div class="mt-2 flex justify-end space-x-2">
+                            <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800">
+                    <i class="fas fa-chart-bar text-blue-500 mr-2"></i>
+                    Statistiques
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+                <!-- Age Distribution -->
+                <div>
+                    <h3 class="font-medium text-gray-800 mb-3 text-center">Âge des chiens</h3>
+                    <canvas id="ageChart" height="200"></canvas>
+                </div>
+
+                <!-- Course Distribution -->
+                <div>
+                    <h3 class="font-medium text-gray-800 mb-3 text-center">Inscriptions par cours</h3>
+                    <canvas id="courseChart" height="200"></canvas>
+                </div>
+
+                <!-- Monthly Attendance -->
+                <div>
+                    <h3 class="font-medium text-gray-800 mb-3 text-center">Fréquentation mensuelle</h3>
+                    <canvas id="attendanceChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.flex button').addEventListener('click', function() {
+            document.querySelector('.navbar-menu').classList.toggle('hidden');
+        });
+
+        // Charts
+        // Age Distribution
+        const ageCtx = document.getElementById('ageChart').getContext('2d');
+        const ageChart = new Chart(ageCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['<1 an', '1-3 ans', '3-6 ans', '6-10 ans', '>10 ans'],
+                datasets: [{
+                    data: [45, 68, 42, 23, 11],
+                    backgroundColor: [
+                        '#3B82F6',
+                        '#10B981',
+                        '#F59E0B',
+                        '#6366F1',
+                        '#EF4444'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Course Distribution
+        const courseCtx = document.getElementById('courseChart').getContext('2d');
+        const courseChart = new Chart(courseCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Éducation chiots', 'Agilité', 'Obéissance', 'Socialisation', 'Autres'],
+                datasets: [{
+                    data: [35, 25, 20, 15, 5],
+                    backgroundColor: [
+                        '#3B82F6',
+                        '#10B981',
+                        '#F59E0B',
+                        '#6366F1',
+                        '#EF4444'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Monthly Attendance
+        const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+        const attendanceChart = new Chart(attendanceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                datasets: [{
+                    label: 'Participants',
+                    data: [120, 145, 168, 132, 156, 142],
+                    backgroundColor: '#3B82F6',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

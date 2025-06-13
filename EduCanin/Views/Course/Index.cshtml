@@ -1,0 +1,204 @@
+﻿@model List<CourseViewModel>
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Canin - Gestion de Cours</title>
+    <link href="~/css/CourseIndex.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2">
+                <a asp-action="Index" asp-controller="News" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-indigo-500 text-2xl"></i>
+                    <span class="text-xl font-bold text-indigo-700">Club Canin</span>
+                </a>
+            </div>
+            <!-- Menu Desktop -->
+            <div class="hidden md:flex space-x-6 items-center">
+                <a asp-action="Index" asp-controller="Course"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-dog mr-1"></i> Cours
+                </a>
+                <a asp-controller="DashBoard" asp-action="Index"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
+                </a>
+                <a asp-action="Index" asp-controller="Parameter"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-cogs mr-1"></i> Paramètres
+                </a>
+                <form asp-action="Logout" asp-controller="Account" method="post" class="inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit"
+                            class="flex items-center text-red-600 hover:underline font-medium hover:text-indigo-500 transition">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Déconnexion
+                    </button>
+                </form>
+            </div>
+            <!-- Bouton Menu Mobile -->
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="mobile-menu hidden flex flex-col space-y-2 mt-2 md:hidden px-4 pb-4">
+            <a asp-action="Index" asp-controller="Course"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-dog mr-2"></i> Cours
+            </a>
+            <a asp-controller="DashBoard" asp-action="Index"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+            </a>
+            <a asp-action="Index" asp-controller="Parameter"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-cogs mr-2"></i> Paramètres
+            </a>
+            <form asp-action="Logout" asp-controller="Account" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="flex items-center text-red-600 font-medium hover:text-indigo-500">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Nos Cours Canins</h1>
+        <!-- Filters -->
+        <div class="mb-8">
+            <h2 class="text-lg font-semibold text-gray-700 mb-3">Filtrer par âge :</h2>
+            <div class="flex flex-wrap gap-2">
+                <button class="filter-btn active-filter px-4 py-2 rounded-full text-sm font-medium transition"
+                        data-filter="all">
+                    <i class="fas fa-dog mr-1"></i> Tous les cours
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm font-medium hover:bg-indigo-100 transition"
+                        data-filter="puppy">
+                    <i class="fas fa-baby mr-1"></i> Chiots (2-6 mois)
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm font-medium hover:bg-indigo-100 transition"
+                        data-filter="junior">
+                    <i class="fas fa-bone mr-1"></i> Jeunes (6+ mois)
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm font-medium hover:bg-indigo-100 transition"
+                        data-filter="adult">
+                    <i class="fas fa-shield-dog mr-1"></i> Ados / Adultes (12+ mois)
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm font-medium hover:bg-indigo-100 transition"
+                        data-filter="senior">
+                    <i class="fas fa-medal mr-1"></i> Avancés (24+ mois)
+                </button>
+            </div>
+        </div>
+        <!-- Courses Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            @foreach (CourseViewModel courseViewModel in Model)
+            {
+                <div class="course-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 card-hover"
+                     data-category="@courseViewModel.DataCategoryFilter">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="@courseViewModel.BoxIconTailwindClass">
+                                <i class="@courseViewModel.IconTailwindClass"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800">@courseViewModel.Title</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">@courseViewModel.Description</p>
+                        <a asp-action="CourseSessionByCourseType"
+                           asp-controller="CourseSession"
+                           asp-route-courseTypeId="@courseViewModel.Id"
+                           class="@courseViewModel.ButtonTailwindClass inline-flex items-center justify-center cursor-pointer focus:outline-none">
+                            Voir les séances <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+        @* Pagination supprimée *@
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-paw text-indigo-400 mr-2"></i> Club Canin
+                    </h3>
+                    <p class="text-gray-300">Éduquer et socialiser votre chien dans une ambiance conviviale et professionnelle.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Accueil</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Nos cours</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Tarifs</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-center"><i class="fas fa-map-marker-alt mr-2 text-indigo-400"></i> 123 Rue des Chiens, 75000 Paris</li>
+                        <li class="flex items-center"><i class="fas fa-phone mr-2 text-indigo-400"></i> 01 23 45 67 89</li>
+                        <li class="flex items-center"><i class="fas fa-envelope mr-2 text-indigo-400"></i> contact@clubcanin.fr</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2023 Club Canin. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const courseCards = document.querySelectorAll('.course-card');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active style from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active-filter'));
+                filterButtons.forEach(btn => {
+                    btn.classList.add('bg-gray-100', 'text-gray-700');
+                    btn.classList.remove('text-white');
+                });
+
+                // Add active to clicked button
+                button.classList.add('active-filter');
+                button.classList.remove('bg-gray-100', 'text-gray-700');
+
+                const filterValue = button.getAttribute('data-filter');
+                // Show/hide courses
+                courseCards.forEach(card => {
+                    if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

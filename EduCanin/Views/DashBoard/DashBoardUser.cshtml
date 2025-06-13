@@ -1,0 +1,490 @@
+﻿@using EduCanin.Models.Entities
+@model ApplicationUser
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Dashboard - Club Canin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @@keyframes slide-in {
+            from {
+            opacity: 0;
+            transform: translateY(-10px);
+        } to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+         }
+
+        .animate-slide-in {
+            animation: slide-in 0.3s ease-out;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-menu {
+            display: none;
+        }
+
+        @@media (max-width: 768px) {
+            .mobile-menu.active
+
+        {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: white;
+            padding: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+        }
+
+        }
+
+        /* Animation pour la modal */
+        @@keyframes fadeIn {
+            0%
+
+        {
+            opacity: 0;
+            transform: scale(0.92);
+        }
+
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2">
+                <a asp-action="Index" asp-controller="News" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-indigo-500 text-2xl"></i>
+                    <span class="text-xl font-bold text-indigo-700">Club Canin</span>
+                </a>
+            </div>
+            <!-- Menu Desktop -->
+            <div class="hidden md:flex space-x-6 items-center">
+                <a asp-action="Index" asp-controller="Course"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-dog mr-1"></i> Cours
+                </a>
+                <a asp-controller="DashBoard" asp-action="Index"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
+                </a>
+                <a asp-action="Index" asp-controller="Parameter"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-cogs mr-1"></i> Paramètres
+                </a>
+                <form asp-action="Logout" asp-controller="Account" method="post" class="inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit"
+                            class="flex items-center text-red-600 hover:underline font-medium hover:text-indigo-500 transition">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Déconnexion
+                    </button>
+                </form>
+            </div>
+            <!-- Bouton Menu Mobile -->
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="mobile-menu hidden flex flex-col space-y-2 mt-2 md:hidden px-4 pb-4">
+            <a asp-action="Index" asp-controller="Course"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-dog mr-2"></i> Cours
+            </a>
+            <a asp-controller="DashBoard" asp-action="Index"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+            </a>
+            <a asp-action="Index" asp-controller="Parameter"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-cogs mr-2"></i> Paramètres
+            </a>
+            <form asp-action="Logout" asp-controller="Account" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="flex items-center text-red-600 font-medium hover:text-indigo-500">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Mes Chiens Section -->
+        <section class="mb-12">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-800">
+                    <i class="fas fa-dog text-indigo-500 mr-2"></i>
+                    Mes Chiens
+                </h2>
+                <a asp-action="Create" asp-controller="Dogs"
+                   class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center whitespace-nowrap">
+                    <i class="fas fa-plus mr-2"></i>
+                    Ajouter un chien
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @if (Model.Dogs != null && Model.Dogs.Any())
+                {
+                    @foreach (var dog in Model.Dogs)
+                    {
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:transform hover:scale-105 dog-card"
+                             data-breed="@dog.Breed?.Name" data-gender="@dog.DogGender"
+                             data-age="@((int)(DateTime.Now.Year - dog.BirthDate.Year))">
+                            <div class="relative">
+                                <!-- Image du chien depuis placedog.net -->
+                                <img src="https://placedog.net/400/300?id=@dog.Id" alt="Photo de @dog.Name"
+                                     class="w-full h-48 object-cover">
+
+                                <!-- Badge de l'âge -->
+                                <div class="absolute top-2 right-2 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                    @{
+                                        var birthDate = dog.BirthDate.ToDateTime(TimeOnly.MinValue);
+                                        var age = DateTime.Now.Year - birthDate.Year;
+                                        var months = DateTime.Now.Month - birthDate.Month;
+                                        if (DateTime.Now.Day < birthDate.Day)
+                                        {
+                                            months--;
+                                        }
+                                        if (months < 0)
+                                        {
+                                            age--;
+                                            months += 12;
+                                        }
+                                    }
+                                    @if (age == 0)
+                                    {
+                                        <span>@months mois</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@age an@(age > 1 ? "s" : "")</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="p-4">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-xl font-bold text-gray-800">@dog.Name</h3>
+                                    <span class="text-sm inline-flex items-center">
+                                        @if (dog.DogGender == DogGender.Male)
+                                        {
+                                            <i class="fas fa-mars text-blue-500 mr-1"></i>
+                                            <span class="text-blue-500">Mâle</span>
+                                        }
+                                        else if (dog.DogGender == DogGender.Female)
+                                        {
+                                            <i class="fas fa-venus text-pink-500 mr-1"></i>
+                                            <span class="text-pink-500">Femelle</span>
+                                        }
+                                    </span>
+                                </div>
+
+                                <div class="text-gray-600 mb-3">
+                                    <div class="flex items-center mb-1">
+                                        <i class="fas fa-paw text-indigo-500 w-5"></i>
+                                        <span>@dog.Breed?.Name</span>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <span class="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">
+                                        @dog.DogCourseSessions.Count session@(dog.DogCourseSessions.Count != 1 ? "s" : "") de
+                                        cours
+                                    </span>
+                                </div>
+
+                                <div class="flex justify-between items-center pt-4 border-t border-gray-100 mt-4">
+                                    <button type="button"
+                                            class="text-indigo-600 hover:text-indigo-800 font-medium open-details-modal"
+                                            data-dog-id="@dog.Id">
+                                        <i class="fas fa-eye mr-1"></i>
+                                        Voir détails
+                                    </button>
+                                    <div class="flex space-x-2">
+                                        <a asp-action="Edit" asp-controller="Dogs" asp-route-id="@dog.Id"
+                                           class="text-yellow-600 hover:text-yellow-800">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-controller="Dogs" asp-route-id="@dog.Id" method="post"
+                                              class="inline">
+                                              @Html.AntiForgeryToken()
+                                            <button type="submit" class="text-red-600 hover:text-red-800">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-span-full bg-gray-50 rounded-lg p-8 text-center">
+                        <div class="mx-auto w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mb-4">
+                            <i class="fas fa-dog text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-600 mb-2">Aucun chien enregistré</h3>
+                        <p class="text-gray-500 mb-6">Commencez par ajouter votre premier compagnon à quatre pattes</p>
+                        <a asp-action="Create" asp-controller="Dogs"
+                           class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                            <i class="fas fa-plus mr-2"></i>
+                            Ajouter un chien
+                        </a>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <!-- Historique Section -->
+        <section>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-history text-indigo-500 mr-2"></i>
+                Historique des Cours
+            </h2>
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <!-- Table Header -->
+                <div class="hidden md:grid grid-cols-12 bg-gray-50 px-6 py-3 border-b border-gray-200">
+                    <div class="col-span-3 font-medium text-gray-700">
+                        <i class="fas fa-calendar-day mr-2 text-indigo-500"></i>Date
+                    </div>
+                    <div class="col-span-3 font-medium text-gray-700">
+                        <i class="fas fa-bone mr-2 text-indigo-500"></i>Type de cours
+                    </div>
+                    <div class="col-span-3 font-medium text-gray-700">
+                        <i class="fas fa-user-tie mr-2 text-indigo-500"></i>Coach
+                    </div>
+                    <div class="col-span-3 font-medium text-gray-700">
+                        <i class="fas fa-dog mr-2 text-indigo-500"></i>Avec
+                    </div>
+                </div>
+
+                <!-- Table Rows -->
+                <!-- Session 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition">
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-calendar-day text-indigo-500 mr-2 md:hidden"></i>
+                        <span class="font-medium">Samedi 6 mai 2023</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-bone text-indigo-500 mr-2 md:hidden"></i>
+                        <span>Éducation 6-12 mois</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-user-tie text-indigo-500 mr-2 md:hidden"></i>
+                        <span>Marie Dupont</span>
+                    </div>
+                    <div class="col-span-3 flex items-center">
+                        <i class="fas fa-dog text-indigo-500 mr-2 md:hidden"></i>
+                        <span>Rex</span>
+                    </div>
+                </div>
+
+                <!-- Session 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition">
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-calendar-day text-indigo-500 mr-2 md:hidden"></i>
+                        <span class="font-medium">Mercredi 3 mai 2023</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-bone text-indigo-500 mr-2 md:hidden"></i>
+                        <span>Agility débutant</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-user-tie text-indigo-500 mr-2 md:hidden"></i>
+                        <span>Jean Martin</span>
+                    </div>
+                    <div class="col-span-3 flex items-center">
+                        <i class="fas fa-dog text-indigo-500 mr-2 md:hidden"></i>
+                        <span>Luna</span>
+                    </div>
+                </div>
+
+                <!-- Session 3 -->
+                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 hover:bg-gray-50 transition">
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-calendar-day text-indigo-500 mr-2 md:hidden"></i>
+                        <span class="font-medium">Samedi 22 avril 2023</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-bone text-indigo-500 mr-2 md:hidden"></i>
+                        <span>Socialisation</span>
+                    </div>
+                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-user-tie text-indigo-500 mr-2 md:hidden"></i>
+                        <span>Sophie Leroy</span>
+                    </div>
+                    <div class="col-span-3 flex items-center">
+                        <i class="fas fa-dog text-indigo-500 mr-2 md:hidden"></i>
+                        <span>Rex</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center">
+                <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition font-medium">
+                    <i class="fas fa-history mr-1"></i> Voir tout l'historique
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-paw text-indigo-400 mr-2"></i> Club Canin
+                    </h3>
+                    <p class="text-gray-300">Votre partenaire pour l'éducation canine depuis 2010.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Assistance</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Centre d'aide</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Contactez-nous</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Suivez-nous</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition text-xl">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white transition text-xl">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white transition text-xl">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2023 Club Canin. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Overlay et conteneur de la modal -->
+    <div id="detailsModal"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm hidden transition duration-300">
+        <!-- Le contenu AJAX sera injecté ici -->
+        <div id="modalContent" class="relative w-full max-w-3xl mx-4 sm:mx-6 lg:mx-auto">
+            
+        </div>
+    </div>
+
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+            });
+        }
+
+        // Gestion des modales de détails des chiens
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.open-details-modal').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    console.log('Bouton modal cliqué'); // Debug
+
+                    var dogId = this.getAttribute('data-dog-id');
+                    console.log('Dog ID:', dogId); // Debug
+
+                    // Afficher un loader ou message de chargement
+                    const modal = document.getElementById('detailsModal');
+                    const modalContent = document.getElementById('modalContent');
+
+                    modalContent.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center"><i class="fas fa-spinner fa-spin text-2xl text-indigo-500"></i><p class="mt-2">Chargement...</p></div>';
+                    modal.classList.remove('hidden');
+
+                    fetch('/Dogs/DetailsModal/' + dogId)
+                        .then(response => {
+                            console.log('Response status:', response.status); // Debug
+                            if (!response.ok) {
+                                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                            }
+                            return response.text();
+                        })
+                        .then(html => {
+                            console.log('HTML reçu:', html.substring(0, 100) + '...'); // Debug
+
+                            modalContent.innerHTML = html;
+                            // Animation
+                            modalContent.classList.add('animate-fadeIn');
+                            setTimeout(() => modalContent.classList.remove('animate-fadeIn'), 350);
+
+                            // Gestion du bouton de fermeture
+                            const closeBtn = document.getElementById('close-modal-btn');
+                            if (closeBtn) {
+                                closeBtn.onclick = () => {
+                                    modal.classList.add('hidden');
+                                };
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur:', error); // Debug
+                            modalContent.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center text-red-600"><i class="fas fa-exclamation-triangle text-2xl"></i><p class="mt-2">Erreur lors du chargement</p><p class="text-sm">' + error.message + '</p></div>';
+                        });
+                });
+            });
+
+            // Fermer la modal au clic sur le fond noir
+            const detailsModal = document.getElementById('detailsModal');
+            if (detailsModal) {
+                detailsModal.addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        this.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Fermer avec la touche Échap
+            document.addEventListener('keydown', function (e) {
+                if (e.key === "Escape") {
+                    const modal = document.getElementById('detailsModal');
+                    if (modal) {
+                        modal.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

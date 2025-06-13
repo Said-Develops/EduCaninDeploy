@@ -1,0 +1,153 @@
+﻿@using EduCanin.Models.Entities
+@model Dog
+
+<div class="relative bg-white rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl
+    p-3 sm:p-4 md:p-6 lg:p-7
+    w-[95vw] sm:w-full
+    max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl
+    max-h-[90vh] sm:max-h-[85vh] lg:max-h-[80vh] 2xl:max-h-none
+    overflow-y-auto
+    border border-indigo-100 animate-fadeIn
+    mx-auto">
+
+    <!-- Bouton de fermeture -->
+    <button id="close-modal-btn" type="button"
+            class="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4
+                   text-gray-400 hover:text-indigo-600 transition
+                   text-xl sm:text-2xl focus:outline-none
+                   w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-gray-100"
+            aria-label="Fermer">
+        <i class="fas fa-times"></i>
+    </button>
+
+    <!-- Image du chien -->
+    <div class="flex justify-center mb-3 sm:mb-4 md:mb-5">
+        <img src="https://placedog.net/1000/800?id=@Model.Id"
+             alt="Photo de @Model.Name"
+             class="rounded-xl sm:rounded-2xl shadow object-cover border-2 sm:border-4 border-indigo-200
+                    w-[280px] h-48
+                    sm:w-72 sm:h-56
+                    md:w-80 md:h-60
+                    lg:w-[450px] lg:h-[340px]" />
+    </div>
+
+    <div class="text-center space-y-2 sm:space-y-3">
+        <!-- Nom et genre -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-2">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">
+                @Model.Name
+            </h2>
+            @if (Model.DogGender == DogGender.Male)
+            {
+                <span class="inline-flex items-center px-2 py-1 rounded-full bg-blue-100 text-blue-800 text-xs sm:text-sm font-medium">
+                    <i class="fas fa-mars mr-1"></i> Mâle
+                </span>
+            }
+            else if (Model.DogGender == DogGender.Female)
+            {
+                <span class="inline-flex items-center px-2 py-1 rounded-full bg-pink-100 text-pink-800 text-xs sm:text-sm font-medium">
+                    <i class="fas fa-venus mr-1"></i> Femelle
+                </span>
+            }
+        </div>
+
+        <!-- Race -->
+        <div class="flex items-center justify-center gap-2 text-gray-500 text-sm sm:text-base">
+            <i class="fas fa-paw text-indigo-400"></i>
+            <span class="font-medium">@Model.Breed?.Name</span>
+        </div>
+
+        <!-- Date de naissance & âge -->
+        <div class="space-y-1">
+            @{
+                var birth = Model.BirthDate.ToDateTime(TimeOnly.MinValue);
+                var today = DateTime.Today;
+                var ageYears = today.Year - birth.Year;
+                var ageMonths = today.Month - birth.Month;
+
+                if (today.Day < birth.Day)
+                {
+                    ageMonths--;
+                }
+                if (ageMonths < 0)
+                {
+                    ageYears--;
+                    ageMonths += 12;
+                }
+            }
+            <span class="inline-flex items-center px-2 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs sm:text-sm font-semibold">
+                <i class="fas fa-birthday-cake mr-1"></i>
+                @if (ageYears == 0)
+                {
+                    <text>@ageMonths mois</text>
+                }
+                else
+                {
+                    <text>@ageYears an@(ageYears > 1 ? "s" : "")@(ageMonths > 0 ? $" et {ageMonths} mois" : "")</text>
+                }
+            </span>
+            <div class="text-xs text-gray-400">
+                <i class="fas fa-calendar-alt mr-1"></i>
+                Né le @Model.BirthDate.ToString("dd/MM/yyyy")
+            </div>
+        </div>
+
+        <!-- Données techniques -->
+        <div class="grid grid-cols-2 gap-2 sm:gap-3 max-w-xs mx-auto">
+            <div class="bg-gray-50 rounded-lg p-2 sm:p-3 text-center">
+                <span class="block text-xs text-gray-400 mb-1">Poids</span>
+                <span class="font-bold text-base sm:text-lg text-gray-700">@Model.Weight kg</span>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-2 sm:p-3 text-center">
+                <span class="block text-xs text-gray-400 mb-1">Taille</span>
+                <span class="font-bold text-base sm:text-lg text-gray-700">@Model.Height cm</span>
+            </div>
+        </div>
+
+        <!-- Sessions -->
+        <div>
+            @{
+                var sessionCount = Model.DogCourseSessions?.Count() ?? 0;
+            }
+            <span class="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs sm:text-sm font-semibold">
+                <i class="fas fa-chalkboard-teacher mr-1"></i>
+                @sessionCount session@(sessionCount == 1 ? "" : "s")
+            </span>
+        </div>
+    </div>
+</div>
+
+<style>
+    @@keyframes fadeIn {
+        0%
+
+    {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Point de rupture personnalisé pour très petits écrans */
+    @@media (min-width: 375px) {
+        .xs\:w-64
+
+    {
+        width: 16rem;
+    }
+
+    .xs\:h-48 {
+        height: 12rem;
+    }
+
+    }
+</style>

@@ -1,0 +1,293 @@
+﻿@model CourseSessionsFilterPaginationViewModel
+@{
+    ViewBag.Title = "Séances - Club Canin";
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .session-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .complet-btn {
+            background-color: #ef4444 !important;
+            cursor: not-allowed;
+        }
+        .mobile-menu { display: none; }
+        @@media (max-width: 640px) {
+            .mobile-menu.active {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: white;
+                padding: 1rem;
+                box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+                z-index: 50;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2">
+                <a asp-action="Index" asp-controller="News" class="flex items-center space-x-2">
+                    <i class="fas fa-paw text-indigo-500 text-2xl"></i>
+                    <span class="text-xl font-bold text-indigo-700">Club Canin</span>
+                </a>
+            </div>
+            <!-- Menu Desktop -->
+            <div class="hidden md:flex space-x-6 items-center">
+                <a asp-action="Index" asp-controller="Course"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-dog mr-1"></i> Cours
+                </a>
+                <a asp-controller="DashBoard" asp-action="Index"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
+                </a>
+                <a asp-action="Index" asp-controller="Parameter"
+                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                    <i class="fas fa-cogs mr-1"></i> Paramètres
+                </a>
+                <form asp-action="Logout" asp-controller="Account" method="post" class="inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit"
+                            class="flex items-center text-red-600 hover:underline font-medium hover:text-indigo-500 transition">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Déconnexion
+                    </button>
+                </form>
+            </div>
+            <!-- Bouton Menu Mobile -->
+            <button id="mobile-menu-button" class="md:hidden text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="mobile-menu hidden flex flex-col space-y-2 mt-2 md:hidden px-4 pb-4">
+            <a asp-action="Index" asp-controller="Course"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-dog mr-2"></i> Cours
+            </a>
+            <a asp-controller="DashBoard" asp-action="Index"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+            </a>
+            <a asp-action="Index" asp-controller="Parameter"
+               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+                <i class="fas fa-cogs mr-2"></i> Paramètres
+            </a>
+            <form asp-action="Logout" asp-controller="Account" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="flex items-center text-red-600 font-medium hover:text-indigo-500">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Titre -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
+                    <i class="fas fa-bone text-indigo-500 mr-2"></i>
+                    Séances pour « @Model.CourseTypeTitle »
+                </h1>
+                <p class="text-gray-600 mt-2">Trouvez la séance qui correspond à votre emploi du temps</p>
+            </div>
+            <a asp-action="Index" asp-controller="Course" class="mt-4 md:mt-0 inline-flex items-center text-indigo-600 hover:text-indigo-800 transition">
+                <i class="fas fa-arrow-left mr-2"></i> Retour aux cours
+            </a>
+        </div>
+
+        <!-- Filtres -->
+<form method="get" asp-action="CourseSessionByCourseType" class="bg-white p-4 rounded-lg shadow-sm mb-8">
+    <input type="hidden" name="courseTypeId" value="@Model.CourseTypeId" />
+    <h2 class="text-lg font-semibold text-gray-700 mb-3">Filtrer les séances :</h2>
+    <div class="flex flex-col md:flex-row md:items-center gap-4">
+        <!-- Filtre Date -->
+                <div class="flex-1">
+                    <label for="date-filter" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input type="date"
+                           id="date-filter"
+                           name="date"
+                           value=""
+                           min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                           class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+        <!-- Filtre Disponibilité -->
+        <div class="flex-1">
+            <label for="availability-filter" class="block text-sm font-medium text-gray-700 mb-1">Disponibilité</label>
+            <div class="relative">
+                <select
+                    id="availability-filter"
+                    name="onlyAvailable"
+                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 appearance-none">
+                    <option value="">Toutes les séances</option>
+                            <option value="true" selected="@(Model.OnlyAvailable == true ? "selected" : null)">Places disponibles</option>
+
+                </select>
+                <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400"></i>
+            </div>
+        </div>
+        <div class="self-end">
+            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition font-medium">
+                Appliquer <i class="fas fa-filter ml-1"></i>
+            </button>
+        </div>
+    </div>
+</form>
+
+        <!-- Grille des séances -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            @if (Model.Sessions.Any())
+            {
+                foreach (CourseSessionViewModel session in Model.Sessions)
+                {
+                    <div class="session-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <div class="flex items-center mb-2">
+                                        <i class="fas fa-calendar-day text-indigo-500 mr-2"></i>
+                                        <span class="font-semibold text-gray-800">
+                                            @session.SessionDate.ToString("dddd dd MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("fr-FR"))
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center mb-2">
+                                        <i class="fas fa-clock text-indigo-500 mr-2"></i>
+                                        <span class="text-gray-700">@session.StartTime - @session.EndTime</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-user-tie text-indigo-500 mr-2"></i>
+                                        <span class="text-gray-700">@session.CoachName</span>
+                                    </div>
+                                </div>
+                                @if (!session.IsFull)
+                                {
+                                    <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                        <i class="fas fa-check-circle mr-1"></i> @session.SpotsLeft place(s)
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+                                        <i class="fas fa-times-circle mr-1"></i> Complet
+                                    </div>
+                                }
+                            </div>
+                            <div class="mt-6">
+                                @if (!session.IsFull)
+                                {
+                                    <a asp-action="Register"
+                                       asp-controller="CourseSession"
+                                       asp-route-sessionId="@session.Id"
+                                       class="w-full py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition font-medium flex items-center justify-center">
+                                        S'inscrire <i class="fas fa-paw ml-2"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button class="w-full py-2 bg-gray-300 text-gray-600 rounded-md font-medium complet-btn" disabled>
+                                        Complet <i class="fas fa-lock ml-2"></i>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-span-3 text-center text-gray-500 font-semibold py-8">
+                    Aucune séance trouvée pour votre recherche.
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="flex justify-center space-x-2">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    if (i == Model.PageIndex)
+                    {
+                        <span class="pagination-btn px-4 py-2 rounded-md bg-indigo-600 text-white font-medium">@i</span>
+                    }
+                    else
+                    {
+                        <a asp-action="CourseSessionByCourseType"
+                           asp-route-courseTypeId="@Model.CourseTypeId"
+                           asp-route-date="@(Model.SelectedDate.HasValue ? Model.SelectedDate.Value.ToString("yyyy-MM-dd") : null)"
+                           asp-route-onlyAvailable="@(Model.OnlyAvailable == true ? "true" : null)"
+                           asp-route-page="@i"
+                           class="pagination-btn px-4 py-2 rounded-md bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition">
+                            @i
+                        </a>
+                    }
+                }
+                
+            </div>
+        }
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-paw text-indigo-400 mr-2"></i> Club Canin
+                    </h3>
+                    <p class="text-gray-300">Éduquer et socialiser votre chien dans une ambiance conviviale et professionnelle.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Accueil</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Nos cours</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Tarifs</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-center"><i class="fas fa-map-marker-alt mr-2 text-indigo-400"></i> 123 Rue des Chiens, 75000 Paris</li>
+                        <li class="flex items-center"><i class="fas fa-phone mr-2 text-indigo-400"></i> 01 23 45 67 89</li>
+                        <li class="flex items-center"><i class="fas fa-envelope mr-2 text-indigo-400"></i> contact@clubcanin.fr</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2023 Club Canin. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS (mobile menu uniquement, à supprimer si pas utile) -->
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+            });
+        }
+    </script>
+</body>
+</html>

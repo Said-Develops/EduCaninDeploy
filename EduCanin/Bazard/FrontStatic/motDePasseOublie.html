@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mot de passe oublié</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            border: none;
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+            padding: 10px 20px;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+        }
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .alert {
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card">
+                    <div class="card-header p-4 text-center">
+                        <h4 class="mb-0">Mot de passe oublié</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-info" role="alert">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                        </div>
+                        
+                        <form id="password-reset-form">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Adresse e-mail</label>
+                                <input type="email" class="form-control" id="email" placeholder="exemple@domaine.com" required>
+                                <div class="invalid-feedback">
+                                    Veuillez entrer une adresse e-mail valide.
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" type="submit">Réinitialiser mon mot de passe</button>
+                            </div>
+                        </form>
+                        
+                        <div class="mt-4 text-center">
+                            <a href="connexion.html" class="text-decoration-none">Retour à la connexion</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Message de succès (caché par défaut) -->
+                <div class="alert alert-success mt-3 d-none" id="success-message">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Un lien de réinitialisation a été envoyé à votre adresse e-mail.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('password-reset-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Vérifier si l'email est valide
+            const emailInput = document.getElementById('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(emailInput.value)) {
+                emailInput.classList.add('is-invalid');
+                return;
+            }
+            
+            // Simuler l'envoi du formulaire
+            emailInput.classList.remove('is-invalid');
+            document.getElementById('password-reset-form').classList.add('d-none');
+            document.getElementById('success-message').classList.remove('d-none');
+            
+            // Ici, vous pourriez ajouter votre logique pour envoyer la demande au serveur
+        });
+    </script>
+</body>
+</html>
