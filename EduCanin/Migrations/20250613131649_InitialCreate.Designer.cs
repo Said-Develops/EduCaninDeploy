@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EduCanin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250613085711_InitialCreate")]
+    [Migration("20250613131649_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
