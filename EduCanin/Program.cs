@@ -83,11 +83,13 @@ app.MapControllerRoute(
 app.MapRazorPages()
    .WithStaticAssets();
 
+
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
 }
+
 
 // On cree un scope manuellement avec 'using' pour garantir qu'il sera libere une fois utilise.
 // ASP.NET Core ne cree pas automatiquement de scope ici car on est en dehors d'une requete HTTP.

@@ -71,7 +71,7 @@ namespace EduCanin.Service
             {
                 sessions = sessions.Where(s => s.DogParticipants.Count < courseType.ParticipantsMaximal);
             }
-
+            
 
             int totalSessions = sessions.Count();
 
