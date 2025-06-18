@@ -68,8 +68,25 @@ jobs:
           # Compilation du projet
           dotnet build
 
-          # Exécution des tests unitaires avec génération de couverture
-          dotnet test --no-build --collect:"XPlat Code Coverage"
+          # ✅ Exécution des tests avec logger TRX (format reconnu par GitHub)
+          # ✅ Génération des résultats dans le dossier TestResults/
+          dotnet test --no-build --logger "trx;LogFileName=test-results.trx" --results-directory TestResults
 
           # Fin de l’analyse (et envoi des résultats à SonarCloud)
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+      # ✅ Étape 7 : Upload des résultats de test en tant qu'artifact téléchargeable
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results # Nom visible dans GitHub Actions
+          path: TestResults/*.trx # Fichier .trx généré par dotnet test
+
+      # ✅ Étape 8 : Publication des résultats dans l'interface GitHub Actions (onglet "Tests")
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: always() # S’exécute même si des tests échouent
+        with:
+          name: Unit Tests # Nom du bloc dans GitHub UI
+          path: TestResults/*.trx # Fichier de résultat
+          reporter: dotnet-trx # Format de fichier utilisé par dotnet test
