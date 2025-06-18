@@ -1,0 +1,62 @@
+# Nom du workflow (visible dans l'onglet Actions de GitHub)
+name: CI
+
+# Déclencheurs : 
+# Ici, le workflow s'exécute quand :
+#  - on push sur la branche main
+#  - on ouvre une pull request vers la branche main
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Définition des jobs (ici on a un seul job nommé 'build')
+jobs:
+  build:
+    # Nom lisible du job (visible dans l'interface Actions)
+    name: Build, Test & Analyze
+    
+    # Machine virtuelle sur laquelle le job va tourner
+    runs-on: ubuntu-latest
+
+    # Liste des étapes que le runner va exécuter dans l'ordre
+    steps:
+      # Étape 1 : Récupérer le code source du dépôt GitHub
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Étape 2 : Installer le SDK .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'  # On précise la version du SDK qu'on veut installer
+
+      # Étape 3 : Restaurer les dépendances NuGet
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Étape 4 : Compiler le projet
+      - name: Build
+        run: dotnet build --no-restore
+        # --no-restore car on vient juste de restaurer avant → gain de temps
+
+      # Étape 5 : Exécuter les tests unitaires
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
+        # --no-build car on vient de compiler → gain de temps
+        # --verbosity normal pour avoir un niveau de log standard
+
+      # Étape 6 : Lancer l'analyse SonarCloud
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2.2.0
+        with:
+          args: >
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        # Cette action :
+        # - télécharge et exécute le scanner SonarCloud
+        # - lit les paramètres dans sonar-project.properties
+        # - envoie le rapport d'analyse à ton tableau de bord SonarCloud
+        # Le token est récupéré via secrets.SONAR_TOKEN pour sécuriser l'authentification

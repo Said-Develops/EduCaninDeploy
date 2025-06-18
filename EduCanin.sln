@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EduCanin", "EduCanin\EduCanin.csproj", "{991DE871-AB2E-4CF2-A24D-03E02C6B2B0C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Educanin.Tests", "Educanin.Tests\Educanin.Tests.csproj", "{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{991DE871-AB2E-4CF2-A24D-03E02C6B2B0C}.Release|x64.Build.0 = Release|Any CPU
 		{991DE871-AB2E-4CF2-A24D-03E02C6B2B0C}.Release|x86.ActiveCfg = Release|Any CPU
 		{991DE871-AB2E-4CF2-A24D-03E02C6B2B0C}.Release|x86.Build.0 = Release|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Debug|x64.Build.0 = Debug|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Debug|x86.Build.0 = Debug|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Release|x64.ActiveCfg = Release|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Release|x64.Build.0 = Release|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Release|x86.ActiveCfg = Release|Any CPU
+		{DFAF88D2-4622-4C15-A41A-82CADC1CFB68}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

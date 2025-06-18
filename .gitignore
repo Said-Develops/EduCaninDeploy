@@ -56,3 +56,4 @@ nunit-*.xml
 # Security
 appsettings.Development.json
 /EduCanin/appsettings.Development.json
+EduCanin.sln.DotSettings
