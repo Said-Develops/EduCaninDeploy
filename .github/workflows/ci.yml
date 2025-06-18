@@ -13,6 +13,10 @@ jobs:
     name: Build and analyze
     runs-on: windows-latest # Le job s’exécute sur une machine virtuelle Windows
 
+    permissions:
+      checks: write # autorise GitHub à écrire les résultats de test (check run)
+      contents: read # autorise la lecture du contenu du dépôt
+
     steps:
       # Étape 1 : Installer Java (requis par SonarScanner)
       - name: Set up JDK 17
