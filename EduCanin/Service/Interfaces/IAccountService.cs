@@ -1,4 +1,4 @@
-﻿using EduCanin.ViewModels;
+﻿using EduCanin.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 
 namespace EduCanin.Service.Interfaces

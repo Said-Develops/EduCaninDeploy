@@ -43,10 +43,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(DogCourseSession => DogCourseSession.CourseSessionId)
             .OnDelete(DeleteBehavior.Restrict);
 
-
-
-
-
         });
     }
 }

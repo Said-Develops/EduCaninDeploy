@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using EduCanin.Models;
-using EduCanin.ViewModels;
+using EduCanin.Models.ViewModels;
 
 namespace EduCanin.Controllers;
 

@@ -1,7 +1,7 @@
 ﻿using EduCanin.Models.Entities;
+using EduCanin.Models.ViewModels;
 using EduCanin.Repositories.Interfaces;
 using EduCanin.Service.Interfaces;
-using EduCanin.ViewModels;
 
 namespace EduCanin.Service
 {

@@ -1,5 +1,5 @@
 ﻿using EduCanin.Models.Entities;
-using EduCanin.ViewModels;
+using EduCanin.Models.ViewModels;
 
 namespace EduCanin.Service.Interfaces
 {

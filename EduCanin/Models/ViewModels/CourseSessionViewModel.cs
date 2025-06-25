@@ -1,4 +1,4 @@
-﻿namespace EduCanin.ViewModels
+﻿namespace EduCanin.Models.ViewModels
 {
     public class CourseSessionViewModel
     {

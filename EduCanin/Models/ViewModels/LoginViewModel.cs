@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EduCanin.ViewModels
+namespace EduCanin.Models.ViewModels
 {
     public class LoginViewModel
     {

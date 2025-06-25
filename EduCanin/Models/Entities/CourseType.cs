@@ -11,7 +11,6 @@
         public int ParticipantsMaximal { get; set; }
         public int MinimalDurationInMinutes { get; set; }
         public int MaximalDurationInMinutes { get; set; }
-
         public ICollection<Breed> ForbidenBreed { get; set; } = new List<Breed>();
         public ICollection<CourseSession> Sessions { get; set; } = new List<CourseSession>();
     }

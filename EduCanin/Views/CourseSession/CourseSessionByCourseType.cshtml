@@ -1,4 +1,5 @@
-﻿@model CourseSessionsFilterPaginationViewModel
+﻿@using EduCanin.Models.ViewModels
+@model CourseSessionsFilterPaginationViewModel
 @{
     ViewBag.Title = "Séances - Club Canin";
 }
@@ -137,7 +138,7 @@
                     name="onlyAvailable"
                     class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 appearance-none">
                     <option value="">Toutes les séances</option>
-                            <option value="true" selected="@(Model.OnlyAvailable == true ? "selected" : null)">Places disponibles</option>
+                    <option value="true" selected="@(Model.OnlyAvailable == true ? "selected" : null)">Places disponibles</option>
 
                 </select>
                 <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400"></i>
@@ -192,9 +193,9 @@
                             <div class="mt-6">
                                 @if (!session.IsFull)
                                 {
-                                    <a asp-action="Register"
+                                    <a asp-action="CourseSessionRegister"
                                        asp-controller="CourseSession"
-                                       asp-route-sessionId="@session.Id"
+                                       asp-route-courseSessionId="@session.Id"
                                        class="w-full py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition font-medium flex items-center justify-center">
                                         S'inscrire <i class="fas fa-paw ml-2"></i>
                                     </a>

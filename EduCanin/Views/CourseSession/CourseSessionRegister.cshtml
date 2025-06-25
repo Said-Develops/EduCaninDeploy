@@ -1,0 +1,131 @@
+﻿@model EduCanin.Models.ViewModels.DogCourseSessionRegistrationViewModel
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription - @Model.CourseTitle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans text-gray-900 min-h-screen">
+
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        <!-- En-tête de la séance -->
+        <div class="mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-indigo-700 flex items-center">
+                <i class="fas fa-dog mr-3 text-indigo-500"></i>
+                Inscription à la séance : <span class="ml-2 text-gray-800">@Model.CourseTitle</span>
+            </h1>
+            <p class="text-sm text-gray-500 mt-1">Merci de sélectionner le chien à inscrire ci-dessous</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Infos générales -->
+            <div class="col-span-2 space-y-6">
+                <!-- Détails de la séance -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-calendar-day text-indigo-500 mr-2"></i> Détails de la séance
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+                        <p><strong>Date :</strong> @Model.StartDateTime.ToString("dddd d MMMM yyyy")</p>
+                        <p><strong>Heure :</strong> @Model.StartTime - @Model.EndTime</p>
+                        <p><strong>Durée :</strong> @Model.DurationInMinutes minutes</p>
+                        <p><strong>Places restantes :</strong> @Model.SpotsLeft / @Model.ParticipantsMaximal</p>
+                    </div>
+                </div>
+
+                <!-- Pré-requis -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-info-circle text-indigo-500 mr-2"></i> Prérequis
+                    </h2>
+                    <ul class="list-disc list-inside text-sm text-gray-700 space-y-1">
+                        <li>Âge minimum : <strong>@Model.AgeMinimal</strong> mois</li>
+                        <li>Âge maximum : <strong>@Model.AgeMaximal</strong> mois</li>
+                        @if (Model.ForbiddenBreedNames.Any())
+                        {
+                            <li>Races interdites : <strong>@string.Join(", ", Model.ForbiddenBreedNames)</strong></li>
+                        }
+                    </ul>
+                </div>
+
+                <!-- Formulaire d'inscription -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-dog text-indigo-500 mr-2"></i> Choix du chien
+                    </h2>
+
+                    <form asp-action="CourseSessionRegister" method="post" class="space-y-6">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="CourseSessionId" />
+
+                        <div>
+                            <label asp-for="SelectedDogId" class="block text-sm font-medium text-gray-700 mb-1">
+                                <i class="fas fa-paw mr-1 text-indigo-500"></i> Sélectionner un chien :
+                            </label>
+                            <select asp-for="SelectedDogId" asp-items="Model.Dogs"
+                            class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="">-- Sélectionner un chien --</option>
+                            </select>
+                            <span asp-validation-for="SelectedDogId" class="text-red-500 text-sm mt-1 block"></span>
+                        </div>
+
+                        <div class="pt-4">
+                            <button type="submit"
+                            class="w-full inline-flex justify-center items-center gap-2 py-3 px-6 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition">
+                                <i class="fas fa-check-circle"></i>
+                                Inscrire ce chien
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Coach -->
+            <div class="bg-white p-6 rounded-xl shadow-md h-fit">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-user-tie text-indigo-500 mr-2"></i> Coach
+                </h2>
+
+                @{
+                    string coachImageUrl;
+
+                    switch(Model.CoachName?.Trim().ToLower())
+                    {
+                        case "marie":
+                            coachImageUrl = "https://i.pravatar.cc/150?u=0";
+                            break;
+                        case "jean":
+                            coachImageUrl = "https://i.pravatar.cc/150?u=27";
+                            break;
+                        case "justine":
+                            coachImageUrl = "https://i.pravatar.cc/150?u=233";
+                            break;
+                        default:
+                            coachImageUrl = "https://i.pravatar.cc/150?u={Model.CoachName}";
+                            break;
+                    }
+                }
+                <div class="flex flex-col items-center text-center">
+                    <img src="@coachImageUrl" alt="Coach"
+                         class="w-28 h-28 rounded-full shadow mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">@Model.CoachName</h3>
+                    <p class="text-sm text-gray-600">Éducateur canin certifié</p>
+                    <span class="mt-3 inline-block bg-indigo-100 text-indigo-800 text-xs font-medium px-3 py-1 rounded-full">
+                        @Model.CourseTitle
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

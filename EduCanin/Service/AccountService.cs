@@ -1,9 +1,9 @@
 ﻿using EduCanin.Models.Entities;
 using System.Diagnostics.Metrics;
 using EduCanin.Service.Interfaces;
-using EduCanin.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using EduCanin.Models.ViewModels;
 
 namespace EduCanin.Service
 {

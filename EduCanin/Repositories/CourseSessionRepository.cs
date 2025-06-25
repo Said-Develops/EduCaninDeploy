@@ -35,6 +35,17 @@ namespace EduCanin.Repositories
             return await _applicationDbContext.CourseSessions.FindAsync(id);
         }
 
+        public async Task<CourseSession?> GetByIdAsyncWithAll(int id)
+        {
+            return await _applicationDbContext.CourseSessions
+                .Include(cs => cs.CourseType)
+                    .ThenInclude(ct => ct.ForbidenBreed)
+                .Include(cs => cs.DogParticipants)
+                    .ThenInclude(dp => dp.Dog)
+                .Include(cs => cs.Coach)
+                .FirstOrDefaultAsync(cs => cs.Id == id);
+        }
+
         public async Task SaveChangesAsync()
         {
             await _applicationDbContext.SaveChangesAsync();

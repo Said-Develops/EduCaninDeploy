@@ -1,7 +1,9 @@
 ﻿using EduCanin.Models.Entities;
+using EduCanin.Models.ViewModels;
 using EduCanin.Repositories.Interfaces;
 using EduCanin.Service.Interfaces;
-using EduCanin.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EduCanin.Service
 {
@@ -9,11 +11,13 @@ namespace EduCanin.Service
     {
         private readonly ICourseSessionRepository _courseSessionRepository;
         private readonly ICourseTypeService _courseTypeService;
+        private readonly IApplicationUserService _applicationUserService;
 
-        public CourseSessionService(ICourseSessionRepository courseSessionRepository, ICourseTypeService courseTypeService)
+        public CourseSessionService(ICourseSessionRepository courseSessionRepository, ICourseTypeService courseTypeService, IApplicationUserService applicationUserService)
         {
             _courseSessionRepository = courseSessionRepository;
             _courseTypeService = courseTypeService;
+            _applicationUserService = applicationUserService;
         }
 
         public async Task AddAsync(CourseSession courseSession)
@@ -41,6 +45,11 @@ namespace EduCanin.Service
         public async Task<CourseSession?> GetByIdAsync(int id)
         {
             return await _courseSessionRepository.GetByIdAsync(id);
+        }
+
+        public async Task<CourseSession?> GetByIdAsyncWithAll(int id)
+        {
+            return await _courseSessionRepository.GetByIdAsyncWithAll(id);
         }
 
         public async Task UpdateAsync(CourseSession courseSession)
@@ -82,7 +91,7 @@ namespace EduCanin.Service
                 //par exemple si on est a la page 2 donc .Skip(2-1)* 9) on aura pas les 9 premiers
                 .Skip((page - 1) * pageSize)
                 //Le take il sert a prendre dans la liste que le nombre de sessions demandé ici c'est 9 
-                //et il laisse tomber tout les autres
+                //et il laisse tomber tous les autres
                 .Take(pageSize)
                 .ToList();
 
@@ -117,6 +126,46 @@ namespace EduCanin.Service
             return viewModel;
 
         }
+
+        public async Task<DogCourseSessionRegistrationViewModel?> GetInformationForRegister(int courseSessionId, string userId)
+        {
+            CourseSession? courseSession = await _courseSessionRepository.GetByIdAsyncWithAll(courseSessionId);
+            if (courseSession == null)
+            {
+                return null;
+            }
+            CourseType courseType = courseSession.CourseType;
+            ApplicationUser coach = courseSession.Coach;
+
+            ApplicationUser? actualUser = await _applicationUserService.GetCurrentUserWithDogsAsync();
+
+
+
+            DogCourseSessionRegistrationViewModel dogCourseSessionRegistrationViewModel = new DogCourseSessionRegistrationViewModel
+            {
+                CourseSessionId = courseSession.Id,
+                CourseTitle = courseType.Title,
+                StartDateTime = courseSession.StartDateTime,
+                DurationInMinutes = courseSession.DurationInMinutes,
+                CoachName = coach.FirstName,
+                RegisteredDogsCount = courseSession.DogParticipants.Count,
+
+                AgeMinimal = courseType.AgeMinimal,
+                AgeMaximal = courseType.AgeMaximal,
+                ParticipantsMaximal = courseType.ParticipantsMaximal,
+                ForbiddenBreedNames = courseType.ForbidenBreed.Select(breed => breed.Name).ToList(),
+                // ici les chiens de l'utilisateur 
+                Dogs = actualUser.Dogs.Select(dog => new SelectListItem
+                {
+                    Value = dog.Id.ToString(),
+                    Text = dog.Name
+                }).ToList()
+            };
+
+            return dogCourseSessionRegistrationViewModel;
+        }
+
+
 
     }
 }

@@ -24,14 +24,13 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Durée du blocage
     options.Lockout.MaxFailedAccessAttempts = 5; // Nombre d’échecs avant le blocage
     options.Lockout.AllowedForNewUsers = true; // Active le blocage même pour les nouveaux comptes
-
     options.SignIn.RequireConfirmedAccount = false;
 
 }).AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-//D�but de mon injection de d�pendance
+//Debut de mon injection de dependance
 //Ici les Repository
 builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 builder.Services.AddScoped<ICourseSessionRepository, CourseSessionRepository>();

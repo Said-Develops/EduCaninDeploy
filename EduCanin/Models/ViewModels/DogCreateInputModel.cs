@@ -1,14 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using EduCanin.Models.Entities;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace EduCanin.ViewModels
+namespace EduCanin.Models.ViewModels
 {
-    public class DogEditViewModel
+    public class DogCreateInputModel
     {
-        [Required]
-        public int Id { get; set; }
-
         [Required]
         [Display(Name = "Nom du chien")]
         public string Name { get; set; }
@@ -35,8 +30,5 @@ namespace EduCanin.ViewModels
         [Display(Name = "Taille (cm)")]
         [Range(0, 200)]
         public int? Height { get; set; }
-
-        public IEnumerable<SelectListItem> Breeds { get; set; }
-
     }
 }

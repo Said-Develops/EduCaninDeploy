@@ -6,6 +6,7 @@ namespace EduCanin.Repositories.Interfaces
     {
         Task<IEnumerable<CourseSession>> GetAllAsync();
         Task<CourseSession?> GetByIdAsync(int id);
+        Task<CourseSession?> GetByIdAsyncWithAll(int id);
         Task AddAsync(CourseSession courseSession);
         void Update(CourseSession courseSession);
         void Delete(CourseSession courseSession);

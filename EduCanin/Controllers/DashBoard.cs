@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using EduCanin.Models.Entities;
+using EduCanin.Models.ViewModels;
 using EduCanin.Service;
 using EduCanin.Service.Interfaces;
-using EduCanin.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

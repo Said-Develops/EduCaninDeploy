@@ -1,7 +1,8 @@
-﻿using EduCanin.Models.Entities;
+﻿using System.Security.Claims;
+using EduCanin.Models.Entities;
+using EduCanin.Models.ViewModels;
 using EduCanin.Repositories.Interfaces;
 using EduCanin.Service.Interfaces;
-using EduCanin.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduCanin.Controllers
@@ -29,6 +30,19 @@ namespace EduCanin.Controllers
             return View(viewModel);
         }
 
+        public async Task<IActionResult> CourseSessionRegister(int courseSessionId)
+        {
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            DogCourseSessionRegistrationViewModel? dogCourseSessionRegistrationViewModel = await _courseSessionService.GetInformationForRegister(courseSessionId, userId);
+            if (dogCourseSessionRegistrationViewModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(dogCourseSessionRegistrationViewModel);
+
+
+        }
 
     }
 }

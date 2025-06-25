@@ -1,11 +1,11 @@
 ﻿using EduCanin.Models.Entities;
 using EduCanin.Service.Interfaces;
-using EduCanin.ViewModels;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using EduCanin.Models.ViewModels;
 
 namespace EduCanin.Controllers
 {

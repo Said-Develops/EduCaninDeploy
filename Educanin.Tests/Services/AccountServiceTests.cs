@@ -1,6 +1,6 @@
 ﻿using EduCanin.Models.Entities;
+using EduCanin.Models.ViewModels;
 using EduCanin.Service;
-using EduCanin.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Moq;
