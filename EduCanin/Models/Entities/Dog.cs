@@ -12,6 +12,23 @@ namespace EduCanin.Models.Entities
 
         public DateOnly BirthDate { get; set; }
 
+        [NotMapped]
+        public int Age
+        {
+            get
+            {
+                DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+                int age = today.Year - BirthDate.Year;
+
+                if (today < new DateOnly(today.Year, BirthDate.Month, BirthDate.Day))
+                {
+                    age--;
+                }
+
+                return age;
+            }
+        }
+
         public DogGender DogGender { get; set; }
 
         public int Weight { get; set; }

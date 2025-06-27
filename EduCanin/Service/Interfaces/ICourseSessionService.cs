@@ -15,5 +15,7 @@ namespace EduCanin.Service.Interfaces
         Task<CourseSessionsFilterPaginationViewModel> GetSessionsForCourseTypeAsync(int courseTypeId, DateOnly? date, bool? onlyAvailable, int page, int pageSize);
 
         Task<DogCourseSessionRegistrationViewModel?> GetInformationForRegister(int courseSessionId, string userId);
+
+        Task<string> CheckIfDogCanBeRegisteredAsync(int dogId, int courseSessionId);
     }
 }

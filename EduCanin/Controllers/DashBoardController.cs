@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EduCanin.Controllers
 {
-    public class DashBoard : Controller
+    [Authorize]
+    public class DashBoardController : Controller
     {
         private readonly IApplicationUserService _applicationUserService;
         private readonly IDogService _dogService;
 
-        public DashBoard(IApplicationUserService applicationUserService, IDogService dogService)
+        public DashBoardController(IApplicationUserService applicationUserService, IDogService dogService)
         {
             _applicationUserService = applicationUserService;
             _dogService = dogService;
@@ -56,13 +57,14 @@ namespace EduCanin.Controllers
 
         public async Task<IActionResult> DashBoardUser()
         {
-            ApplicationUser? user = await _applicationUserService.GetCurrentUserWithDogsAsync();
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (user == null)
+            if (userId == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
+            ApplicationUser? user = await _applicationUserService.GetUserWithFullSessionDataByIdAsync(userId);
             return View(user); // user.Dogs est aussi inclus
         }
 

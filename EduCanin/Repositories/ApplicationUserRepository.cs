@@ -47,8 +47,27 @@ namespace EduCanin.Repositories
         {
             return await _applicationDbContext.ApplicationUsers
                 .Include(ApplicationUser => ApplicationUser.Dogs)
-                .ThenInclude(dogs => dogs.Breed)
+                    .ThenInclude(dogs => dogs.Breed)
+                .Include(ApplicationUser => ApplicationUser.Dogs)
+                    .ThenInclude(dogs => dogs.DogCourseSessions)
+                        .ThenInclude(DogCourseSession => DogCourseSession.CourseSession)
                 .FirstOrDefaultAsync(ApplicationUser => ApplicationUser.Id == guid);
         }
+
+        public async Task<ApplicationUser?> GetUserWithFullSessionDataByIdAsync(string userId)
+        {
+            return await _applicationDbContext.ApplicationUsers
+                .Where(applicationUser => applicationUser.Id == userId)
+                .Include(applicationUser => applicationUser.Dogs)
+                    .ThenInclude(dog => dog.DogCourseSessions)
+                        .ThenInclude(dogCourseSession => dogCourseSession.CourseSession)
+                            .ThenInclude(courseSession => courseSession.CourseType)
+                .Include(applicationUser => applicationUser.Dogs)
+                    .ThenInclude(dog => dog.DogCourseSessions)
+                        .ThenInclude(dogCourseSession => dogCourseSession.CourseSession)
+                                .ThenInclude(courseSession => courseSession.Coach)
+                .FirstOrDefaultAsync();
+        }
+
     }
 }

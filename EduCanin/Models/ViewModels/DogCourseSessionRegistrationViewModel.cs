@@ -7,11 +7,11 @@ namespace EduCanin.Models.ViewModels
     {
         // Session info
         public int CourseSessionId { get; set; }
-        public string CourseTitle { get; set; }
+        public string? CourseTitle { get; set; }
         public DateTime StartDateTime { get; set; }
         public string StartTime => StartDateTime.ToString("HH:mm");
         public string EndTime => StartDateTime.AddMinutes(DurationInMinutes).ToString("HH:mm");
-        public string CoachName { get; set; }
+        public string? CoachName { get; set; }
         public int DurationInMinutes { get; set; }
         public int SpotsLeft => ParticipantsMaximal - RegisteredDogsCount;
         public int RegisteredDogsCount { get; set; }
@@ -27,5 +27,7 @@ namespace EduCanin.Models.ViewModels
 
         [Required(ErrorMessage = "Veuillez sélectionner un chien.")]
         public int SelectedDogId { get; set; }
+
+
     }
 }

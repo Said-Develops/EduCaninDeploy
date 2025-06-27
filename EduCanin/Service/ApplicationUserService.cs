@@ -64,5 +64,10 @@ namespace EduCanin.Service
             _applicationUserRepository.Update(applicationUser);
             await _applicationUserRepository.SaveChangesAsync();
         }
+
+        public async Task<ApplicationUser?> GetUserWithFullSessionDataByIdAsync(string userId)
+        {
+            return await _applicationUserRepository.GetUserWithFullSessionDataByIdAsync(userId);
+        }
     }
 }

@@ -10,8 +10,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-gray-100 font-sans text-gray-900 min-h-screen">
-
+    <div class="fixed top-4 left-4 z-50 sm:static sm:mb-4 sm:mt-4 sm:ml-4">
+        <a asp-action="Index" asp-controller="Course"
+           class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-white/80 backdrop-blur-sm text-gray-700 rounded-lg shadow-md hover:bg-white hover:text-gray-900 border border-gray-200 transition whitespace-nowrap">
+            <i class="fas fa-arrow-left"></i>
+            <span class="hidden xs:inline">Retour aux cours</span>
+        </a>
+    </div>
     <main class="max-w-6xl mx-auto px-4 py-12">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="bg-red-100 border border-red-400 text-red-800 px-4 py-2 rounded mb-4">
+                @TempData["SuccessMessage"]
+            </div>
+        }
         <!-- En-tête de la séance -->
         <div class="mb-10">
             <h1 class="text-3xl md:text-4xl font-bold text-indigo-700 flex items-center">

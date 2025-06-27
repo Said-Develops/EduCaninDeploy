@@ -12,6 +12,8 @@ namespace EduCanin.Repositories.Interfaces
         Task SaveChangesAsync();
         Task<ApplicationUser?> GetUserWithDogsByIdAsync(string guid);
 
+        Task<ApplicationUser?> GetUserWithFullSessionDataByIdAsync(string userId);
+
 
     }
 }

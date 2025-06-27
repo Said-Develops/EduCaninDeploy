@@ -11,6 +11,7 @@ namespace EduCanin.Service.Interfaces
         Task UpdateAsync(ApplicationUser applicationUser);
         Task DeleteAsync(string guid);
         Task<ApplicationUser?> GetCurrentUserWithDogsAsync();
+        Task<ApplicationUser?> GetUserWithFullSessionDataByIdAsync(string userId);
 
     }
 }

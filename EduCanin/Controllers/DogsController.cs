@@ -6,9 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using EduCanin.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EduCanin.Controllers
 {
+    [Authorize]
     public class DogsController : Controller
     {
         private readonly IDogService _dogService;

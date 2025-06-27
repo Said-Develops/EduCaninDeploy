@@ -12,12 +12,14 @@ namespace EduCanin.Service
         private readonly ICourseSessionRepository _courseSessionRepository;
         private readonly ICourseTypeService _courseTypeService;
         private readonly IApplicationUserService _applicationUserService;
+        private readonly IDogRepository _dogRepository;
 
-        public CourseSessionService(ICourseSessionRepository courseSessionRepository, ICourseTypeService courseTypeService, IApplicationUserService applicationUserService)
+        public CourseSessionService(ICourseSessionRepository courseSessionRepository, ICourseTypeService courseTypeService, IApplicationUserService applicationUserService, IDogRepository dogRepository)
         {
             _courseSessionRepository = courseSessionRepository;
             _courseTypeService = courseTypeService;
             _applicationUserService = applicationUserService;
+            _dogRepository = dogRepository;
         }
 
         public async Task AddAsync(CourseSession courseSession)
@@ -68,6 +70,11 @@ namespace EduCanin.Service
             }
 
             IEnumerable<CourseSession> sessions = courseType.Sessions;
+            TimeZoneInfo parisTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Paris");
+            DateTime nowInParis = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, parisTimeZone);
+
+            sessions = sessions.Where(s => s.StartDateTime >= nowInParis);
+
 
             if (date.HasValue)
             {
@@ -163,6 +170,54 @@ namespace EduCanin.Service
             };
 
             return dogCourseSessionRegistrationViewModel;
+        }
+
+        public async Task<string> CheckIfDogCanBeRegisteredAsync(int dogId, int courseSessionId)
+        {
+            Dog? dog = await _dogRepository.GetByIdAsync(dogId);
+            CourseSession? courseSession = await _courseSessionRepository.GetByIdAsyncWithAll(courseSessionId);
+
+            if(dog == null )
+            {
+                return "Ce chien est introuvable.";
+            }
+
+            if (courseSession == null)
+            {
+                return "La séance est introuvable.";
+            }
+
+            bool isAlreadyRegistered = courseSession.DogParticipants.Any(participant => participant.DogId == dogId);
+            if (isAlreadyRegistered)
+            {
+                return "Ce chien est déjà inscrit à cette séance.";
+            }
+
+            bool isForbiddenBreed = courseSession.CourseType.ForbidenBreed.Any(breed => breed.Id == dog.BreedId);
+            if (isForbiddenBreed)
+            {
+                return "La race de ce chien est interdite pour ce cours.";
+            }
+
+            int maximalParticipants = courseSession.CourseType.ParticipantsMaximal;
+            bool isFull = courseSession.DogParticipants.Count >= maximalParticipants;
+            if (isFull)
+            {
+                return "Il n'y a plus de place disponible pour cette séance.";
+            }
+
+            if ((dog.Age*12) < courseSession.CourseType.AgeMinimal)
+            {
+                return "Votre chien est trop jeune pour ce cours.";
+            }
+
+            if ((dog.Age*12) > courseSession.CourseType.AgeMaximal)
+            {
+                return "Votre chien est trop âgé pour ce cours.";
+            }
+
+            return "Inscription validée !";
+
         }
 
 

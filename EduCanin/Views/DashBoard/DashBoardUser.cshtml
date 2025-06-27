@@ -11,64 +11,64 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @@keyframes slide-in {
-            from {
-            opacity: 0;
-            transform: translateY(-10px);
+        from {
+        opacity: 0;
+        transform: translateY(-10px);
         } to {
-            opacity: 1;
-            transform: translateY(0);
+        opacity: 1;
+        transform: translateY(0);
         }
-         }
+        }
 
         .animate-slide-in {
-            animation: slide-in 0.3s ease-out;
+        animation: slide-in 0.3s ease-out;
         }
 
         .card-hover:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         .mobile-menu {
-            display: none;
+        display: none;
         }
 
         @@media (max-width: 768px) {
-            .mobile-menu.active
+        .mobile-menu.active
 
         {
-            display: flex;
-            flex-direction: column;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background-color: white;
-            padding: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            z-index: 50;
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: white;
+        padding: 1rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        z-index: 50;
         }
 
         }
 
         /* Animation pour la modal */
         @@keyframes fadeIn {
-            0%
+        0%
 
         {
-            opacity: 0;
-            transform: scale(0.92);
+        opacity: 0;
+        transform: scale(0.92);
         }
 
         100% {
-            opacity: 1;
-            transform: scale(1);
+        opacity: 1;
+        transform: scale(1);
         }
 
         }
 
         .animate-fadeIn {
-            animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
@@ -86,21 +86,21 @@
             <!-- Menu Desktop -->
             <div class="hidden md:flex space-x-6 items-center">
                 <a asp-action="Index" asp-controller="Course"
-                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
                     <i class="fas fa-dog mr-1"></i> Cours
                 </a>
                 <a asp-controller="DashBoard" asp-action="Index"
-                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
                     <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
                 </a>
                 <a asp-action="Index" asp-controller="Parameter"
-                   class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
+                class="flex items-center text-gray-600 font-medium hover:text-indigo-500 transition">
                     <i class="fas fa-cogs mr-1"></i> Paramètres
                 </a>
                 <form asp-action="Logout" asp-controller="Account" method="post" class="inline">
                     @Html.AntiForgeryToken()
                     <button type="submit"
-                            class="flex items-center text-red-600 hover:underline font-medium hover:text-indigo-500 transition">
+                    class="flex items-center text-red-600 hover:underline font-medium hover:text-indigo-500 transition">
                         <i class="fas fa-sign-out-alt mr-1"></i> Déconnexion
                     </button>
                 </form>
@@ -113,15 +113,15 @@
         <!-- Menu Mobile -->
         <div id="mobile-menu" class="mobile-menu hidden flex flex-col space-y-2 mt-2 md:hidden px-4 pb-4">
             <a asp-action="Index" asp-controller="Course"
-               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+            class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
                 <i class="fas fa-dog mr-2"></i> Cours
             </a>
             <a asp-controller="DashBoard" asp-action="Index"
-               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+            class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
                 <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
             </a>
             <a asp-action="Index" asp-controller="Parameter"
-               class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
+            class="flex items-center text-gray-600 font-medium hover:text-indigo-500">
                 <i class="fas fa-cogs mr-2"></i> Paramètres
             </a>
             <form asp-action="Logout" asp-controller="Account" method="post">
@@ -143,7 +143,7 @@
                     Mes Chiens
                 </h2>
                 <a asp-action="Create" asp-controller="Dogs"
-                   class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center whitespace-nowrap">
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center whitespace-nowrap">
                     <i class="fas fa-plus mr-2"></i>
                     Ajouter un chien
                 </a>
@@ -155,12 +155,12 @@
                     @foreach (var dog in Model.Dogs)
                     {
                         <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:transform hover:scale-105 dog-card"
-                             data-breed="@dog.Breed?.Name" data-gender="@dog.DogGender"
-                             data-age="@((int)(DateTime.Now.Year - dog.BirthDate.Year))">
+                        data-breed="@dog.Breed?.Name" data-gender="@dog.DogGender"
+                        data-age="@((int)(DateTime.Now.Year - dog.BirthDate.Year))">
                             <div class="relative">
                                 <!-- Image du chien depuis placedog.net -->
                                 <img src="https://placedog.net/400/300?id=@dog.Id" alt="Photo de @dog.Name"
-                                     class="w-full h-48 object-cover">
+                                class="w-full h-48 object-cover">
 
                                 <!-- Badge de l'âge -->
                                 <div class="absolute top-2 right-2 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full">
@@ -222,19 +222,19 @@
 
                                 <div class="flex justify-between items-center pt-4 border-t border-gray-100 mt-4">
                                     <button type="button"
-                                            class="text-indigo-600 hover:text-indigo-800 font-medium open-details-modal"
-                                            data-dog-id="@dog.Id">
+                                    class="text-indigo-600 hover:text-indigo-800 font-medium open-details-modal"
+                                    data-dog-id="@dog.Id">
                                         <i class="fas fa-eye mr-1"></i>
                                         Voir détails
                                     </button>
                                     <div class="flex space-x-2">
                                         <a asp-action="Edit" asp-controller="Dogs" asp-route-id="@dog.Id"
-                                           class="text-yellow-600 hover:text-yellow-800">
+                                        class="text-yellow-600 hover:text-yellow-800">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form asp-action="Delete" asp-controller="Dogs" asp-route-id="@dog.Id" method="post"
-                                              class="inline">
-                                              @Html.AntiForgeryToken()
+                                        class="inline">
+                                            @Html.AntiForgeryToken()
                                             <button type="submit" class="text-red-600 hover:text-red-800">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
@@ -254,7 +254,7 @@
                         <h3 class="text-lg font-medium text-gray-600 mb-2">Aucun chien enregistré</h3>
                         <p class="text-gray-500 mb-6">Commencez par ajouter votre premier compagnon à quatre pattes</p>
                         <a asp-action="Create" asp-controller="Dogs"
-                           class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
                             <i class="fas fa-plus mr-2"></i>
                             Ajouter un chien
                         </a>
@@ -262,10 +262,105 @@
                 }
             </div>
         </section>
+        @{
+            TimeZoneInfo parisTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Paris");
+
+            DateTime now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, parisTimeZone);
+
+            List<dynamic> allSessions = new List<dynamic>();
+
+            foreach (Dog dog in Model.Dogs)
+            {
+                foreach (DogCourseSession dcs in dog.DogCourseSessions)
+                {
+                    CourseSession course = dcs.CourseSession;
+                    CourseType courseType = course.CourseType;
+                    ApplicationUser coach = course.Coach;
+
+                    allSessions.Add(new
+                    {
+                        DogName = dog.Name,
+                        Course = course,
+                        CourseType = courseType,
+                        Coach = coach
+                    });
+                }
+            }
+
+            List<dynamic> pastSessions = allSessions
+            .Where(session => session.Course.StartDateTime < now)
+            .OrderByDescending(session => session.Course.StartDateTime)
+            .ToList();
+
+            List<dynamic> upcomingSessions = allSessions
+            .Where(session => session.Course.StartDateTime >= now)
+            .OrderBy(session => session.Course.StartDateTime)
+            .ToList();
+        }
+
 
         <!-- Historique Section -->
         <section>
-            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-6">
+
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mt-12 mb-6">
+                <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
+                Prochaines Séances
+            </h2>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+
+                <div class="hidden md:grid grid-cols-12 bg-gray-50 px-6 py-3 border-b border-gray-200">
+                    <div class="col-span-3 font-medium text-gray-700">
+                        <i class="fas fa-calendar-day mr-2 text-indigo-500"></i>Date
+                    </div>
+                    <div class="col-span-3 font-medium text-gray-700">
+                        <i class="fas fa-bone mr-2 text-indigo-500"></i>Type de cours
+                    </div>
+                    <div class="col-span-3 font-medium text-gray-700">
+                        <i class="fas fa-user-tie mr-2 text-indigo-500"></i>Coach
+                    </div>
+                    <div class="col-span-3 font-medium text-gray-700">
+                        <i class="fas fa-dog mr-2 text-indigo-500"></i>Avec
+                    </div>
+                </div>
+
+                @if (upcomingSessions.Count == 0)
+                {
+                    <div class="text-center px-6 py-8 text-gray-500 italic">
+                        <i class="fas fa-calendar-times mr-2 text-indigo-400"></i> Aucune séance à venir pour l'instant.
+                    </div>
+                }
+                else
+                {
+                    @foreach (dynamic s in upcomingSessions)
+                    {
+                        <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition">
+                            <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                                <i class="fas fa-calendar-day text-indigo-500 mr-2 md:hidden"></i>
+                                <span class="font-medium">@s.Course.StartDateTime.ToString("dddd dd MMMM yyyy à HH:mm")</span>
+                            </div>
+                            <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                                <i class="fas fa-bone text-indigo-500 mr-2 md:hidden"></i>
+                                <span>@s.CourseType.Title</span>
+                            </div>
+                            <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                                <i class="fas fa-user-tie text-indigo-500 mr-2 md:hidden"></i>
+                                <span>@s.Coach.FirstName @s.Coach.LastName</span>
+                            </div>
+                            <div class="col-span-3 flex items-center">
+                                <i class="fas fa-dog text-indigo-500 mr-2 md:hidden"></i>
+                                <span>@s.DogName</span>
+                            </div>
+                        </div>
+                    }
+
+                }
+
+
+            </div>
+
+
+
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mt-20 mb-6">
                 <i class="fas fa-history text-indigo-500 mr-2"></i>
                 Historique des Cours
             </h2>
@@ -286,74 +381,42 @@
                         <i class="fas fa-dog mr-2 text-indigo-500"></i>Avec
                     </div>
                 </div>
+                @if (pastSessions.Count == 0)
+                {
+                    <div class="text-center px-6 py-8 text-gray-500 italic">
+                        <i class="fas fa-clock mr-2 text-indigo-400"></i> Aucun cours suivi pour l’instant.
+                    </div>
+                }
+                else
+                {
+                    @foreach (dynamic s in pastSessions)
+                    {
+                        <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition">
+                            <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                                <i class="fas fa-calendar-day text-indigo-500 mr-2 md:hidden"></i>
+                                <span class="font-medium">@s.Course.StartDateTime.ToString("dddd dd MMMM yyyy à HH:mm")</span>
+                            </div>
+                            <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                                <i class="fas fa-bone text-indigo-500 mr-2 md:hidden"></i>
+                                <span>@s.CourseType.Title</span>
+                            </div>
+                            <div class="col-span-3 flex items-center mb-2 md:mb-0">
+                                <i class="fas fa-user-tie text-indigo-500 mr-2 md:hidden"></i>
+                                <span>@s.Coach.FirstName @s.Coach.LastName</span>
+                            </div>
+                            <div class="col-span-3 flex items-center">
+                                <i class="fas fa-dog text-indigo-500 mr-2 md:hidden"></i>
+                                <span>@s.DogName</span>
+                            </div>
+                        </div>
+                    }
+                }
 
-                <!-- Table Rows -->
-                <!-- Session 1 -->
-                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition">
-                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
-                        <i class="fas fa-calendar-day text-indigo-500 mr-2 md:hidden"></i>
-                        <span class="font-medium">Samedi 6 mai 2023</span>
-                    </div>
-                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
-                        <i class="fas fa-bone text-indigo-500 mr-2 md:hidden"></i>
-                        <span>Éducation 6-12 mois</span>
-                    </div>
-                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
-                        <i class="fas fa-user-tie text-indigo-500 mr-2 md:hidden"></i>
-                        <span>Marie Dupont</span>
-                    </div>
-                    <div class="col-span-3 flex items-center">
-                        <i class="fas fa-dog text-indigo-500 mr-2 md:hidden"></i>
-                        <span>Rex</span>
-                    </div>
-                </div>
 
-                <!-- Session 2 -->
-                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition">
-                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
-                        <i class="fas fa-calendar-day text-indigo-500 mr-2 md:hidden"></i>
-                        <span class="font-medium">Mercredi 3 mai 2023</span>
-                    </div>
-                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
-                        <i class="fas fa-bone text-indigo-500 mr-2 md:hidden"></i>
-                        <span>Agility débutant</span>
-                    </div>
-                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
-                        <i class="fas fa-user-tie text-indigo-500 mr-2 md:hidden"></i>
-                        <span>Jean Martin</span>
-                    </div>
-                    <div class="col-span-3 flex items-center">
-                        <i class="fas fa-dog text-indigo-500 mr-2 md:hidden"></i>
-                        <span>Luna</span>
-                    </div>
-                </div>
 
-                <!-- Session 3 -->
-                <div class="grid grid-cols-1 md:grid-cols-12 px-6 py-4 hover:bg-gray-50 transition">
-                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
-                        <i class="fas fa-calendar-day text-indigo-500 mr-2 md:hidden"></i>
-                        <span class="font-medium">Samedi 22 avril 2023</span>
-                    </div>
-                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
-                        <i class="fas fa-bone text-indigo-500 mr-2 md:hidden"></i>
-                        <span>Socialisation</span>
-                    </div>
-                    <div class="col-span-3 flex items-center mb-2 md:mb-0">
-                        <i class="fas fa-user-tie text-indigo-500 mr-2 md:hidden"></i>
-                        <span>Sophie Leroy</span>
-                    </div>
-                    <div class="col-span-3 flex items-center">
-                        <i class="fas fa-dog text-indigo-500 mr-2 md:hidden"></i>
-                        <span>Rex</span>
-                    </div>
-                </div>
             </div>
 
-            <div class="mt-4 text-center">
-                <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition font-medium">
-                    <i class="fas fa-history mr-1"></i> Voir tout l'historique
-                </button>
-            </div>
+
         </section>
 
     </main>

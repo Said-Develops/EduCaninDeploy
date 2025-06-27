@@ -31,7 +31,11 @@ namespace EduCanin.Repositories
 
         public async Task<Dog?> GetByIdAsync(int id)
         {
-            return await _applicationDbContext.Dogs.Include(dog => dog.Breed).FirstAsync(dog => dog.Id == id);
+            return await _applicationDbContext.Dogs
+                .Include(dog => dog.Breed)
+                .Include(dog => dog.DogCourseSessions)
+                    .ThenInclude(DogCourseSession => DogCourseSession.CourseSession)
+                .FirstAsync(dog => dog.Id == id);
         }
 
         public async Task SaveChangesAsync()
